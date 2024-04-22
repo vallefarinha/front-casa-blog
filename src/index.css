@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    @font-face {
+      font-family: 'Poppins-Black';
+      src: url(/src/assets/fonts/Poppins-Black.ttf) format('truetype');
+      font-weight: 900;
+    }
+    @font-face {
+      font-family: 'Poppins-ExtraBold';
+      src: url(/src/assets/fonts/Poppins-ExtraBold.ttf) format('truetype');
+      font-weight: 800;
+    }
+     @font-face {
+        font-family: 'Poppins-Bold';
+        src: url(/src/assets/fonts/Poppins-Bold.ttf) format('truetype');
+        font-weight: 700;
+      }
+      @font-face {
+        font-family: 'Poppins-SemiBold';
+        src: url(/src/assets/fonts/Poppins-SemiBold.ttf) format('truetype');
+        font-weight: 600;
+      }
+      @font-face {
+        font-family: 'Poppins-Medium';
+        src: url(/src/assets/fonts/Poppins-Medium.ttf) format('truetype');
+        font-weight: 500;
+      } 
+      @font-face {
+        font-family: 'Poppins-Regular';
+        src: url(/src/assets/fonts/Poppins-Regular.ttf) format('truetype');
+        font-weight: 400;
+      } 
+      @font-face {
+        font-family: 'Poppins-MediumItalic';
+        src: url(/src/assets/fonts/Poppins-MediumItalic.ttf) format('truetype');
+        font-weight: 500;
+        font-style: italic;
+      } 
+      @font-face {
+        font-family: 'Poppins-SemiBoldItalic';
+        src: url(/src/assets/fonts/Poppins-SemiBoldItalic.ttf) format('truetype');
+        font-weight: 600;
+        font-style: italic;
+      } 
+
+  }
+
+.capitalize-first::first-letter {
+        text-transform: uppercase;
+      }
+
+  .slick-slide > div{
+    margin: 0 10px;
+ }
+
+ 
+.custom-height {
+  height: calc(100vh - 88px);
+}
+.our-history-container {
+  display: flex;
+  overflow-x: auto; 
+  overflow-y: hidden;
+}
+
+.our-history-section {
+  flex: 0 0 auto; 
+  width: 100vw; 
+}
+
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #06D6A0;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: inherit;
+}
+
+.bg-custom-size {
+  background-size: 300px 300px;
+}
