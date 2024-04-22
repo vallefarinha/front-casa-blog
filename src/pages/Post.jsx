@@ -14,14 +14,14 @@ function Post() {
   return (
 <>
 
-<div className="flex flex-col w-[80%] mx-auto">
+<div className="flex flex-col w-[60%] mx-auto">
   <div className='my-10'>
   <ArrowButton  rotate='left'  onClick={handleClick} />
   </div>
 
 <div className="bg-white">
    
-      <img className="rounded-t-lg w-full h-96" src={casa} alt="" />
+      <img className="rounded-3xl w-full mx-auto h-96" src={casa} alt="" />
    
     <div className="my-6">
     <TitleHistory
