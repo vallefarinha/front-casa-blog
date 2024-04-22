@@ -1,40 +1,24 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/no-unknown-property */
 import React, { useState } from "react";
-import { Link } from "react-router-dom"; // Certifique-se de importar o Link corretamente
 import { Table } from "flowbite-react";
-import { HiDotsHorizontal } from "react-icons/hi";
-import ModalCrud from "../modal/ModalCrud";
+import ModalCrud from "../modal/ModalCrudNewPost";
+import ModalCrudEdit from "../modal/ModalCrudEdit";
 
-function TableAdmin() {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const openModal = () => {
-    setIsModalOpen(true);
+function TableComment() {
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+
+  const toggleFilterDropdown = () => {
+    setIsFilterDropdownOpen(!isFilterDropdownOpen);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const closeMenu = () => {
-    setIsOpen(false);
-  };
 
   return (
-    <div className="overflow-x-auto w-[75%] ml-[5%]">
-      <section className="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5">
+    <div className="w-[75%] ml-[5%]">
+      <section className="bg-gray-50 dark:bg-gray-900">
         <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
-          <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+          <div className="bg-white relative shadow-md sm:rounded-lg">
             <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
               <div className="w-full md:w-1/2">
                 <form className="flex items-center">
@@ -68,55 +52,24 @@ function TableAdmin() {
                 </form>
               </div>
               <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-                <button
-                  type="button"
-                  className="flex items-center justify-center text-LetterColor border bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2"
-                  onClick={openModal}
-                >
-                  +Add product
-                </button>
-                <ModalCrud isOpen={isModalOpen} onClose={closeModal} />
-                <div className="flex items-center space-x-3 w-full md:w-auto">
+                <div className="flex flex-col items-center space-x-3 w-full md:w-auto">
                   <button
                     id="filterDropdownButton"
+                    onClick={toggleFilterDropdown}
+                    aria-expanded={isFilterDropdownOpen ? "true" : "false"}
                     data-dropdown-toggle="filterDropdown"
-                    className="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                    type="button"
+                    className="md:w-auto flex items-center justify-left py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      aria-hidden="true"
-                      className="h-4 w-4 mr-2 text-gray-400"
-                      viewbox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                    Filter
-                    <svg
-                      className="-mr-1 ml-1.5 w-5 h-5"
-                      fill="currentColor"
-                      viewbox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                      aria-hidden="true"
-                    >
-                      <path
-                        clip-rule="evenodd"
-                        fill-rule="evenodd"
-                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      />
-                    </svg>
+                    Filtrar
                   </button>
                   <div
                     id="filterDropdown"
-                    className="z-10 hidden w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700"
+                    className={`z-10 ${
+                      isFilterDropdownOpen ? "block" : "hidden"
+                    } absolute right-0 mt-10 w-48 p-3 bg-white rounded-lg shadow`}
                   >
-                    <h6 className="mb-3 text-sm font-medium text-gray-900 dark:text-white">
-                      Choose brand
+                    <h6 className="mb-3 text-sm font-medium text-gray-900 ">
+                      Elija una categoría
                     </h6>
                     <ul
                       className="space-y-2 text-sm"
@@ -197,173 +150,42 @@ function TableAdmin() {
                 </div>
               </div>
             </div>
-            <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-  <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-    <tr>
-      <th scope="col" className="px-4 py-3">
-        Título
-      </th>
-      <th scope="col" className="px-4 py-3">
-        Contenido
-      </th>
-      <th scope="col" className="px-4 py-3">
-        Categoría
-      </th>
-      <th scope="col" className="px-4 py-3">
-        Imagen
-      </th>
-      <th scope="col" className="px-4 py-3">
-        Acción
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr className="border-b dark:border-gray-700">
-      <th
-        scope="row"
-        className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-      >
-        Apple iMac 27&#34;
-      </th>
-      <td className="px-4 py-3">PC</td>
-      <td className="px-4 py-3">Apple</td>
-      <td className="px-4 py-3">300</td>
-      <td className="px-4 py-3">
-        <div className="relative inline-block text-left">
-          <button
-            id="dropdown-button"
-            onClick={toggleMenu}
-            aria-expanded={isOpen ? "true" : "false"}
-            className="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
-            type="button"
-          >
-            <svg
-              className={`w-5 h-5 ${
-                isOpen ? "hidden" : "block"
-              }`}
-              aria-hidden="true"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <svg
-              className={`w-5 h-5 ${
-                isOpen ? "block" : "hidden"
-              }`}
-              aria-hidden="true"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M14.33 5.424l.943.943L10 11.886l-5.273-5.52.943-.943L10 10l4.33-4.576z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-          <div
-            id="menu-dropdown"
-            className={`${
-              isOpen ? "block" : "hidden"
-            } absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg`}
-          >
-            <div className="py-1">
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-              >
-                Edit
-              </a>
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-              >
-                Delete
-              </a>
-            </div>
-          </div>
-        </div>
-      </td>
-    </tr>
-    <tr className="border-b dark:border-gray-700">
-      <th
-        scope="row"
-        className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-      >
-        Apple iMac 27&#34;
-      </th>
-      <td className="px-4 py-3">PC</td>
-      <td className="px-4 py-3">Apple</td>
-      <td className="px-4 py-3">300</td>
-      <td className="px-4 py-3">
-        <div className="relative inline-block text-left">
-          <button
-            id="dropdown-button"
-            onClick={toggleMenu}
-            aria-expanded={isOpen ? "true" : "false"}
-            className="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
-            type="button"
-          >
-            <svg
-              className={`w-5 h-5 ${
-                isOpen ? "hidden" : "block"
-              }`}
-              aria-hidden="true"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <svg
-              className={`w-5 h-5 ${
-                isOpen ? "block" : "hidden"
-              }`}
-              aria-hidden="true"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M14.33 5.424l.943.943L10 11.886l-5.273-5.52.943-.943L10 10l4.33-4.576z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-          <div
-            id="menu-dropdown"
-            className={`${
-              isOpen ? "block" : "hidden"
-            } absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg`}
-          >
-            <div className="py-1">
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-              >
-                Delete
-              </a>
-            </div>
-          </div>
-        </div>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
+            <div className="">
+              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="col" className="px-4 py-3">
+                      POST
+                    </th>
+                    <th scope="col" className="px-4 py-3">
+                      COMENTÁRIO
+                    </th>
+                    <th scope="col" className="px-4 py-3">
+                      AUTOR
+                    </th>
+                    <th scope="col" className="px-4 py-3">
+                      CORREO
+                    </th>
+                    <th scope="col" className="px-4 py-3">
+                      Acción
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b dark:border-gray-700">
+                    <th
+                      scope="row"
+                      className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                    >
+                      Apple iMac 27&#34;
+                    </th>
+                    <td className="px-4 py-3">PC</td>
+                    <td className="px-4 py-3">Apple</td>
+                    <td className="px-4 py-3">300</td>
+                    <td className="px-4 py-3">Delete</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             <nav
               className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
@@ -472,4 +294,4 @@ function TableAdmin() {
   );
 }
 
-export default TableAdmin;
+export default TableComment;

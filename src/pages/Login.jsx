@@ -1,4 +1,3 @@
-import React from 'react'
 import Title from "../components/title/Title.jsx";
 import { Link } from "react-router-dom";
 
@@ -32,7 +31,9 @@ function Login() {
                           </div>
                       </div>
                   </div>
+                  <Link to="/admin">
                   <button type="submit" className="w-full text-LetterColor bg-tertiaryColor hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-poppinsBold rounded-lg text-sm px-5 py-2.5 text-center">Entrar</button>
+                  </Link>
               </form>
           </div>
       </div>

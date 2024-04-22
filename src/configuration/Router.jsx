@@ -13,7 +13,7 @@ import PartnerForm from "../pages/PartnerForm";
 import ThanksForSignIn from "../pages/ThanksForSignIn";
 import SanJose from "../pages/SanJose";
 import Login from "../pages/Login";
-import PostCard from "../components/cards/blog/card-post/PostCard";
+import Post from "../pages/Post";
 
 
 export default function Router() {
@@ -29,12 +29,11 @@ export default function Router() {
           <Route path="/news" element={<News/>}></Route> 
           <Route path="/blog" element={<Blog/>}></Route> 
           <Route path="/login" element={<Login/>}></Route> 
-          <Route path="/post" element={<PostCard/>}></Route> 
+          <Route path="/post" element={<Post/>}></Route> 
           <Route path="/partnership" element={<BecameAPartner/>}></Route> 
           <Route path="/form" element={<PartnerForm/>}></Route> 
           <Route path="/admin" element={<Admin/>}></Route> 
           <Route path="/thanks" element={<ThanksForSignIn/>}></Route>
-        
       </Routes>
     )
   }
