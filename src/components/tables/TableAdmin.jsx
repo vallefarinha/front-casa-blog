@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unknown-property */
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Certifique-se de importar o Link corretamente
+import { Link } from "react-router-dom";
 import ModalCrud from "../modal/ModalCrudNewPost";
 import ModalCrudEdit from "../modal/ModalCrudEdit";
 import ApiBackend from "../../services/ApiBackend.jsx";
@@ -9,6 +9,13 @@ import ApiBackend from "../../services/ApiBackend.jsx";
 function TableAdmin() {
   const [posts, setPosts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [itemsPerPage, setItemsPerPage] = useState(6);
+  const [selectedPostIndex, setSelectedPostIndex] = useState(null);
+  const [selectedPostId, setSelectedPostId] = useState(null);
 
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [isEditDeleteDropdownOpen, setIsEditDeleteDropdownOpen] =
@@ -19,20 +26,19 @@ function TableAdmin() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const postsData = await ApiBackend.getAllPost();
-        console.log("Posts Data:", postsData);
-        setPosts(postsData);
-
+        const postsData = await ApiBackend.getAllPost(selectedCategory); // Passar as categorias selecionadas para filtrar os posts
+        setPosts(postsData.posts);
         const categoriesData = await ApiBackend.getAllCategories();
-        console.log("Categories Data:", categoriesData);
-        setCategories(categoriesData);
+        setCategories(categoriesData.categories);
       } catch (error) {
-        console.error("Erro ao obter dados:", error);
+        setErrorMessage(
+          "Error al obtener datos. Por favor, inténtalo de nuevo más tarde."
+        );
       }
     };
 
     fetchData();
-  }, []);
+  }, [selectedCategory]);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -42,10 +48,10 @@ function TableAdmin() {
     setIsModalOpen(false);
   };
 
-  const openEditModal = () => {
-    setIsEditModalOpen(true);
-  };
-
+const openEditModal = (postId) => {
+  setSelectedPostId(postId);
+  setIsEditModalOpen(true);
+};
   const closeEditModal = () => {
     setIsEditModalOpen(false);
   };
@@ -54,9 +60,53 @@ function TableAdmin() {
     setIsFilterDropdownOpen(!isFilterDropdownOpen);
   };
 
-  const toggleEditDeleteDropdown = () => {
-    setIsEditDeleteDropdownOpen(!isEditDeleteDropdownOpen);
+  const toggleEditDeleteDropdown = (index) => {
+    setSelectedPostIndex(index === selectedPostIndex ? null : index);
   };
+
+  const handleCategoryChange = (e, categoryId) => {
+    const { checked } = e.target;
+    if (checked) {
+      setSelectedCategory(categoryId.toString());
+    } else {
+      setSelectedCategory("");
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchText(value);
+  };
+
+  let filteredPosts = posts;
+  if (selectedCategory !== "") {
+    filteredPosts = filteredPosts.filter(
+      (post) => post.category_id.toString() === selectedCategory
+    );
+  }
+  console.log("Posts filtrados pela categoria:", filteredPosts);
+  if (searchText !== "") {
+    filteredPosts = filteredPosts.filter((post) =>
+      Object.values(post).some(
+        (value) =>
+          value &&
+          value.toString().toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
+  }
+
+  const handlePageChange = (selectedPage) => {
+    const totalPages = Math.ceil(filteredPosts.length / itemsPerPage);
+    if (selectedPage >= 0 && selectedPage < totalPages) {
+      setCurrentPage(selectedPage);
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const startIndex = currentPage * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, filteredPosts.length);
+
+  const currentPosts = filteredPosts.slice(startIndex, endIndex);
 
   return (
     <div className="w-[75%] ml-[5%]">
@@ -91,6 +141,7 @@ function TableAdmin() {
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Search"
                       required=""
+                      onChange={handleSearchChange}
                     />
                   </div>
                 </form>
@@ -122,25 +173,34 @@ function TableAdmin() {
                     } absolute right-0 mt-10 w-48 p-3 bg-white rounded-lg shadow`}
                   >
                     <h6 className="mb-3 text-sm font-medium text-gray-900 ">
-                      Choose brand
+                      Elija una categoria
                     </h6>
                     <ul
                       className="space-y-2 text-sm"
                       aria-labelledby="filterDropdownButton"
                     >
-                      {categories.map((category, index) => (
-                        <li className="flex items-center" key={index}>
+                      {categories.map((category) => (
+                        <li className="flex items-center" key={category.id}>
                           <input
                             id={category.id}
                             type="checkbox"
-                            value=""
+                            value={category.id}
+                            onChange={(e) =>
+                              handleCategoryChange(e, category.id)
+                            }
                             className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
                           />
                           <label
                             htmlFor={category.id}
                             className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
                           >
-                            {category.name} ({category.count})
+                            {category.name} (
+                            {
+                              posts.filter(
+                                (post) => post.category_id === category.id
+                              ).length
+                            }
+                            )
                           </label>
                         </li>
                       ))}
@@ -171,9 +231,7 @@ function TableAdmin() {
                   </tr>
                 </thead>
                 <tbody>
-                  {posts.map((post, index) => {
-                    console.log("Post:", post);
-
+                  {currentPosts.map((post, index) => {
                     return (
                       <tr
                         key={post.id}
@@ -181,11 +239,15 @@ function TableAdmin() {
                       >
                         <th
                           scope="row"
-                          className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                          className="px-4 py-3 font-medium text-gray-900 whitespace-wrap dark:text-white"
                         >
                           {post.title}
                         </th>
-                        <td className="px-4 py-3">{post.content}</td>
+                        <td className="px-4 py-3">
+                          {post.content.length > 50
+                            ? `${post.content.substring(0, 50)}...`
+                            : post.content}
+                        </td>{" "}
                         <td className="px-4 py-3">{post.category_id}</td>
                         <td className="px-4 py-3">
                           {post.image && (
@@ -200,9 +262,9 @@ function TableAdmin() {
                           <div className="relative inline-block text-left">
                             <button
                               id={`editDeleteDropdownButton-${index}`}
-                              onClick={toggleEditDeleteDropdown}
+                              onClick={() => toggleEditDeleteDropdown(index)}
                               aria-expanded={
-                                isEditDeleteDropdownOpen ? "true" : "false"
+                                selectedPostIndex === index ? "true" : "false"
                               }
                               className="ml-3 md:ml-0 flex items-center justify-center text-gray-900 focus:outline-none bg-white rounded-lg focus:z-10 focus:ring-4 focus:ring-gray-200"
                               type="button"
@@ -212,7 +274,7 @@ function TableAdmin() {
                             <div
                               id={`editDeleteDropdown-${index}`}
                               className={`${
-                                isEditDeleteDropdownOpen ? "block" : "hidden"
+                                selectedPostIndex === index ? "block" : "hidden"
                               } absolute left-0 top-6 w-24 p-3 bg-white rounded-lg shadow`}
                             >
                               <div className="py-1">
@@ -238,6 +300,23 @@ function TableAdmin() {
                 </tbody>
               </table>
             </div>
+
+            <nav className="flex justify-between items-center mt-4">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 0}
+                className="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg cursor-pointer"
+              >
+                Anterior
+              </button>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPosts.length < itemsPerPage}
+                className="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg cursor-pointer"
+              >
+                Próximo
+              </button>
+            </nav>
             <nav
               className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
               aria-label="Table navigation"
@@ -245,11 +324,11 @@ function TableAdmin() {
               <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
                 Showing
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  1-10
+                  {startIndex + 1}-{endIndex}
                 </span>
                 of
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  1000
+                  {filteredPosts.length}
                 </span>
               </span>
               <ul className="inline-flex items-stretch -space-x-px">
@@ -263,79 +342,34 @@ function TableAdmin() {
                       className="w-5 h-5"
                       aria-hidden="true"
                       fill="currentColor"
-                      viewbox="0 0 20 20"
+                      viewBox="0 0 20 20"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       />
                     </svg>
                   </a>
                 </li>
-                <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    1
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    2
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    aria-current="page"
-                    className="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-                  >
-                    3
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    ...
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    100
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    <span className="sr-only">Next</span>
-                    <svg
-                      className="w-5 h-5"
-                      aria-hidden="true"
-                      fill="currentColor"
-                      viewbox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </a>
-                </li>
+                {/* Aqui vão os links de página */}
+                {Array.from(
+                  { length: Math.ceil(filteredPosts.length / itemsPerPage) },
+                  (_, i) => (
+                    <li key={i}>
+                      <a
+                        href="#"
+                        onClick={() => handlePageChange(i)}
+                        className={`flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${
+                          currentPage === i ? "font-semibold" : ""
+                        }`}
+                      >
+                        {i + 1}
+                      </a>
+                    </li>
+                  )
+                )}
               </ul>
             </nav>
           </div>
@@ -345,5 +379,4 @@ function TableAdmin() {
     </div>
   );
 }
-
 export default TableAdmin;
