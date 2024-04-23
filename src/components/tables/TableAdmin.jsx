@@ -1,17 +1,38 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unknown-property */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // Certifique-se de importar o Link corretamente
 import ModalCrud from "../modal/ModalCrudNewPost";
 import ModalCrudEdit from "../modal/ModalCrudEdit";
-
+import ApiBackend from "../../services/ApiBackend.jsx";
 
 function TableAdmin() {
-  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
-  const [isEditDeleteDropdownOpen, setIsEditDeleteDropdownOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Novo estado para o modal de edição
+  const [posts, setPosts] = useState([]);
+  const [categories, setCategories] = useState([]);
 
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+  const [isEditDeleteDropdownOpen, setIsEditDeleteDropdownOpen] =
+    useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const postsData = await ApiBackend.getAllPost();
+        console.log("Posts Data:", postsData);
+        setPosts(postsData);
+
+        const categoriesData = await ApiBackend.getAllCategories();
+        console.log("Categories Data:", categoriesData);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -93,6 +114,7 @@ function TableAdmin() {
                   >
                     Filter
                   </button>
+
                   <div
                     id="filterDropdown"
                     className={`z-10 ${
@@ -106,76 +128,22 @@ function TableAdmin() {
                       className="space-y-2 text-sm"
                       aria-labelledby="filterDropdownButton"
                     >
-                      <li className="flex items-center">
-                        <input
-                          id="apple"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        />
-                        <label
-                          htmlFor="apple"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >
-                          Apple (56)
-                        </label>
-                      </li>
-                      <li className="flex items-center">
-                        <input
-                          id="fitbit"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        />
-                        <label
-                          htmlFor="fitbit"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >
-                          Microsoft (16)
-                        </label>
-                      </li>
-                      <li className="flex items-center">
-                        <input
-                          id="razor"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        />
-                        <label
-                          htmlFor="razor"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >
-                          Razor (49)
-                        </label>
-                      </li>
-                      <li className="flex items-center">
-                        <input
-                          id="nikon"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        />
-                        <label
-                          htmlFor="nikon"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >
-                          Nikon (12)
-                        </label>
-                      </li>
-                      <li className="flex items-center">
-                        <input
-                          id="benq"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        />
-                        <label
-                          htmlFor="benq"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >
-                          BenQ (74)
-                        </label>
-                      </li>
+                      {categories.map((category, index) => (
+                        <li className="flex items-center" key={index}>
+                          <input
+                            id={category.id}
+                            type="checkbox"
+                            value=""
+                            className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                          />
+                          <label
+                            htmlFor={category.id}
+                            className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+                          >
+                            {category.name} ({category.count})
+                          </label>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
@@ -203,50 +171,65 @@ function TableAdmin() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b dark:border-gray-700">
-                    <th
-                      scope="row"
-                      className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                    >
-                      Apple iMac 27&#34;
-                    </th>
-                    <td className="px-4 py-3">PC</td>
-                    <td className="px-4 py-3">Apple</td>
-                    <td className="px-4 py-3">300</td>
-                    <td className="px-4 py-3">
-  <div className="relative inline-block text-left">
-    <button
-      id="editDeleteDropdownButton"
-      onClick={toggleEditDeleteDropdown}
-      aria-expanded={isEditDeleteDropdownOpen ? "true" : "false"}
-      className="ml-3 md:ml-0 flex items-center justify-center text-gray-900 focus:outline-none bg-white rounded-lg focus:z-10 focus:ring-4 focus:ring-gray-200"
-      type="button"
-    >...
-    </button>
-    <div
-      id="editDeleteDropdown"
-      className={`${
-        isEditDeleteDropdownOpen ? "block" : "hidden"
-      } absolute left-0 top-6 w-24 p-3 bg-white rounded-lg shadow`}
-    >
-      <div className="py-1">
-        <button
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-          onClick={openEditModal}
+                {posts.map((post, index) => {
+  console.log("Post:", post);
+
+  return (
+    <tr key={post.id} className="border-b dark:border-gray-700">
+      <th
+        scope="row"
+        className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+      >
+        {post.title}
+      </th>
+      <td className="px-4 py-3">{post.content}</td>
+      <td className="px-4 py-3">{post.category_id}</td>
+      <td className="px-4 py-3">
+        {post.image && (
+          <img
+            src={post.image}
+            alt={post.title}
+            className="w-24 h-24"
+          />
+        )}
+      </td>
+      <td className="px-4 py-3">
+        <div className="relative inline-block text-left">
+          <button
+            id={`editDeleteDropdownButton-${index}`}
+            onClick={toggleEditDeleteDropdown}
+            aria-expanded={isEditDeleteDropdownOpen ? "true" : "false"}
+            className="ml-3 md:ml-0 flex items-center justify-center text-gray-900 focus:outline-none bg-white rounded-lg focus:z-10 focus:ring-4 focus:ring-gray-200"
+            type="button"
           >
-          Edit
-        </button>
-        <a
-          href="#"
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-        >
-          Delete
-        </a>
-      </div>
-    </div>
-  </div>
-</td>
-                  </tr>
+            ...
+          </button>
+          <div
+            id={`editDeleteDropdown-${index}`}
+            className={`${
+              isEditDeleteDropdownOpen ? "block" : "hidden"
+            } absolute left-0 top-6 w-24 p-3 bg-white rounded-lg shadow`}
+          >
+            <div className="py-1">
+              <button
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                onClick={openEditModal}
+              >
+                Edit
+              </button>
+              <a
+                href="#"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+              >
+                Delete
+              </a>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+  );
+})}
                 </tbody>
               </table>
             </div>
