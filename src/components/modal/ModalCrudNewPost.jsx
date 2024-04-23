@@ -1,72 +1,217 @@
-/* eslint-disable react/no-unknown-property */
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-import React from 'react'
+import { useState, useEffect } from "react";
+import ApiBackend from "../../services/ApiBackend.jsx";
+import SimpleAlert from '../../components/alerts/SimpleAlert.jsx';
 
-function ModalCrudNewPost({ isOpen, onClose  }) {
+function ModalCrudNewPost({ isOpen, onClose }) {
+  const [categories, setCategories] = useState([]);
+  const [showAlert, setShowAlert] = useState(false);
+  const [postData, setPostData] = useState({
+    title: "",
+    content: "",
+    category_id: "",
+    author: "Casa de Acogida de la Guia",
+    image: "",
+  });
+  const [imageFile, setImageFile] = useState(null);
+  const [alertMessage, setAlertMessage] = useState("");
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categoriesData = await ApiBackend.getAllCategories();
+        console.log("Categories data:", categoriesData);
+
+        if (
+          categoriesData.categories &&
+          Array.isArray(categoriesData.categories)
+        ) {
+          console.log("Categories data is defined correctly");
+
+          setCategories(categoriesData.categories);
+        } else {
+          setShowAlert(true);
+          setAlertMessage("Erro ao obter categorias. Tente novamente.");
+        }
+      } catch (error) {
+        console.error("Erro ao obter categorias:", error);
+        setShowAlert(true);
+        setAlertMessage("Erro ao obter categorias. Tente novamente.");
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+
+    if (name === "author") {
+      setPostData({ ...postData, [name]: "Casa de Acogida de la Guia" });
+    } else if (name === "category") {
+      // Atualiza o estado com o ID da categoria selecionada
+      setPostData({ ...postData, category_id: value });
+    } else if (name === "image") {
+      if (files && files.length > 0) {
+        // Atualiza o estado com a imagem selecionada
+        setImageFile(files[0]);
+      }
+    } else {
+      setPostData({ ...postData, [name]: value });
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+  
+      formData.append("title", postData.title);
+      formData.append("content", postData.content);
+      formData.append("category_id", postData.category_id);
+      formData.append("author", postData.author);
+      
+      formData.append("image", imageFile);
+  
+      console.log("Dados do post a serem enviados:", formData);
+      
+      const response = await ApiBackend.createPost(formData);
+      
+      console.log("Resposta do servidor:", response);
+      
+      if (response) {
+        console.log("Post criado com sucesso:", response);
+        setShowAlert(true);
+        setAlertMessage("Post criado com sucesso.");
+        onClose();
+      } else {
+        setShowAlert(true);
+        setAlertMessage("Erro ao criar post. Tente novamente.");
+      }
+    } catch (error) {
+      console.error("Erro ao criar post:", error);
+      setShowAlert(true);
+      setAlertMessage("Erro ao criar post. Tente novamente.");
+    }
+  };
+
   return (
-<>
-
-
-<div id="crud-modal" tabindex="-1" aria-hidden="true"  className={`${
+    <>
+      <div
+        id="crud-modal"
+        tabIndex="-1"
+        aria-hidden="true"
+        className={`${
           isOpen ? "fixed" : "hidden"
-        } top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-screen bg-gray-900 bg-opacity-50`}>
-    <div className="relative p-4 w-full max-w-3xl max-h-full">
- 
-
-        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-
+        } top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-screen bg-gray-900 bg-opacity-50`}
+      >
+        <div className="relative p-4 w-full max-w-3xl max-h-full">
+          <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    Criar nuevo post
-                </h3>
-                <button type="button" onClick={onClose} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
-                    <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                    </svg>
-                    <span className="sr-only" >Cerrar</span>
-                </button>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Nuevo post
+              </h3>
+              <button
+                type="button"
+                onClick={onClose}
+                className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                data-modal-toggle="crud-modal"
+              >
+                X
+              </button>
             </div>
-
-            <form className="p-4 md:p-5">
-                <div className="grid gap-4 mb-4 grid-cols-2">
-                    <div className="col-span-2">
-                        <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Titulo</label>
-                        <input type="text" name="name" id="name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type product name" required=""/>
-                    </div>
-                    <div className="col-span-2">
-              
-<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input">Upload file</label>
-<input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file"/>
-
-                        
-                    </div>
-                    <div className="col-span-2 sm:col-span-1">
-                        <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Categoría</label>
-                        <select id="category" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                            <option selected="">Select category</option>
-                            <option value="TV">TV/Monitors</option>
-                            <option value="PC">PC</option>
-                            <option value="GA">Gaming/Console</option>
-                            <option value="PH">Phones</option>
-                        </select>
-                    </div>
-                    <div className="col-span-2">
-                        <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contenido</label>
-                        <textarea id="description" rows="4" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write product description here"></textarea>                    
-                    </div>
+            {showAlert && <SimpleAlert icon="error" text={alertMessage} />}
+            <form className="p-4 md:p-5" onSubmit={handleSubmit}>
+              <div className="grid gap-4 mb-4 grid-cols-2">
+                <div className="col-span-2">
+                  <label
+                    htmlFor="title"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Título
+                  </label>
+                  <input
+                    type="text"
+                    name="title"
+                    id="title"
+                    value={postData.title}
+                    onChange={handleChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="Digite o título do post"
+                    required
+                  />
                 </div>
-                <button type="submit" className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-                    Añadir nuevo post
-                </button>
+
+                <div className="col-span-2 sm:col-span-1">
+                  <label
+                    htmlFor="category"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Categoria
+                  </label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={postData.category_id}
+                    onChange={handleChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  >
+                    <option value="">Categoria</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="col-span-2">
+                  <label
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    htmlFor="file_input"
+                  >
+                    Upload file
+                  </label>
+                  <input
+                    className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                    id="file_input"
+                    type="file"
+                    onChange={(e) => {
+                      console.log("Arquivo da imagem:", e.target.files[0]);
+                      setImageFile(e.target.files[0]);
+                    }}
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <label
+                    htmlFor="content"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Contenido
+                  </label>
+                  <textarea
+                    id="content"
+                    name="content"
+                    rows="4"
+                    value={postData.content}
+                    onChange={handleChange}
+                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Escribe el post aqui"
+                  ></textarea>
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Crear
+              </button>
             </form>
+          </div>
         </div>
-    </div>
-</div> 
-
-
-</>  )
+      </div>
+    </>
+  );
 }
 
-export default ModalCrudNewPost
+export default ModalCrudNewPost;
