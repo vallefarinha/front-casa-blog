@@ -8,11 +8,13 @@ function PostCard({ id, img, imgDescription, title, tag, created }) {
   return (
     <div className="w-72 h-96 bg-white border border-gray-200 rounded-lg shadow">
       <div className="relative h-48 overflow-hidden rounded-t-lg">
-        <img
-          className="object-cover w-full h-full"
-          src={"http://localhost:8000/images/" + img}
-          alt={imgDescription}
-        />
+        <Link to={`/post/${id}`} className="cursor-pointer">
+          <img
+            className="object-cover w-full h-full"
+            src={"http://localhost:8000/images/" + img}
+            alt={imgDescription}
+          />
+        </Link>
       </div>
 
       <div className="px-4 py-2">
@@ -20,15 +22,15 @@ function PostCard({ id, img, imgDescription, title, tag, created }) {
           {tag}
         </div>
         <div className="mt-2">
-          <h5 className="text-xl font-bold tracking-tight text-LetterColor">
-            {title}
-          </h5>
+          <Link to={`/post/${id}`} className="cursor-pointer">
+            <h5 className="text-xl font-bold tracking-tight text-LetterColor">
+              {title}
+            </h5>
+          </Link>
         </div>
         <div className="flex items-center justify-between mt-2">
           <p className="text-sm font-medium text-LetterColor">{createdDate}</p>
-          <Link to={`/post/${id}`} className="cursor-pointer">
-            <PrimaryBtn data={"Leer más"}></PrimaryBtn>
-          </Link>
+          <PrimaryBtn data={"Leer más"} go={`/post/${id}`}></PrimaryBtn>
         </div>
       </div>
     </div>
