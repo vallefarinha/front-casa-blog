@@ -8,7 +8,7 @@ import Petra from "../pages/Petra";
 import News from "../pages/News";
 import Blog from "../pages/Blog";
 import Admin from "../pages/Admin";
-import BecameAPartner from "../pages/BecameAPartner";
+import Collaborate from "../pages/Collaborate";
 import PartnerForm from "../pages/PartnerForm";
 import ThanksForSignIn from "../pages/ThanksForSignIn";
 import SanJose from "../pages/SanJose";
@@ -30,7 +30,7 @@ export default function Router() {
           <Route path="/blog" element={<Blog/>}></Route> 
           <Route path="/login" element={<Login/>}></Route> 
           <Route path="/post" element={<Post/>}></Route> 
-          <Route path="/partnership" element={<BecameAPartner/>}></Route> 
+          <Route path="/partnership" element={<Collaborate/>}></Route> 
           <Route path="/form" element={<PartnerForm/>}></Route> 
           <Route path="/admin" element={<Admin/>}></Route> 
           <Route path="/thanks" element={<ThanksForSignIn/>}></Route>

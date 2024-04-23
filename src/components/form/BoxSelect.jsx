@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
-const BoxSelect = ({ amount, customStyle, textSize }) => {
-  const [isSelected, setIsSelected] = useState(false);
+const BoxSelect = ({ amount, customStyle, textSize, isSelected, onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
@@ -13,7 +12,8 @@ const BoxSelect = ({ amount, customStyle, textSize }) => {
   };
 
   const handleClick = () => {
-    setIsSelected(!isSelected);
+    onClick(amount);
+    console.log(amount)
   };
 
   return (

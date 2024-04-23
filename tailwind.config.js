@@ -21,13 +21,15 @@ export default {
       },
       colors: {
 
-        'LetterColor' : '#073B4C', 
-        'primaryColor' : '#EF476F', 
-        'secondaryColor' : '#FFCF5E',
-        'tertiaryColor' : '#06D6A0', 
-        'quarteryColor' : '#118AB2',
-        'bgColor': '#FAFAFA',
-        'bgColorWithOpacity': 'rgba(250, 250, 250, 0.5)'
+        LetterColor : '#073B4C', 
+        primaryColor : '#EF476F', 
+        secondaryColor : '#FFCF5E',
+        tertiaryColor : '#06D6A0', 
+        quarteryColor : '#118AB2',
+        bgColor: '#FAFAFA',
+        bgColorWithOpacity: 'rgba(250, 250, 250, 0.5)',
+        bgColorColaborateCards: "#FAB3B3",
+        bgColorForm:"#6EB7CF",
       },
       fontFamily: {
         poppinsBlack: ["Poppins-Black", "sans-serif"],

@@ -51,7 +51,7 @@ const Footer = () => {
               <Link to="/blog">Noticias</Link>
             </li>
             <li className="hover:text-tertiaryColor">
-              <Link to="/login">Administrador</Link>
+              <Link to="/login">Gestión</Link>
             </li>
           </ul>
         </div>
