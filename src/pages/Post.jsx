@@ -5,6 +5,8 @@ import CommentInput from "../components/comment/CommentInput";
 import { useNavigate } from "react-router-dom";
 import ApiBackend from "../services/ApiBackend.jsx";
 import { useParams } from "react-router-dom";
+import { Spinner } from "flowbite-react";
+
 function Post() {
   const { id } = useParams();
   const [postData, setPostData] = useState(null);
@@ -62,22 +64,22 @@ function Post() {
             </h2>
             <div className="max-h-[420px] overflow-y-auto">
               {postData.comments.map((comment) => (
-                <>
+                <div key={comment.id}>
                   <Comment
                     author={comment.author}
                     created={comment.created_at}
                     content={comment.content}
                   />
-                  <hr className="border-gray-300 my-6" />
-                </>
+                  <hr key={`hr-${comment.id}`} className="border-gray-300 my-6" />
+                </div>
               ))}
             </div>
           </div>
 
-          <CommentInput />
+          <CommentInput id={postData.id} />
         </>
       ) : (
-        <p>Cargando información del post...</p>
+        <p className="font-poppinsMedium text-LetterColor text-center"><Spinner color="pink" className='text-tertiaryColor' size="xl" aria-label="Pink spinner example" /> Cargando información del post...</p>
       )}
     </div>
   );
