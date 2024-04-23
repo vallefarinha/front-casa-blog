@@ -31,7 +31,6 @@ const ApiBackend = {
       const response = await axios.get(`${API_BASE_URL}/categories`);
       return response.data;
     } catch (error) {
-      console.error("Error al obtener las categorías:", error);
       return [];
     }
   },
@@ -43,10 +42,6 @@ const ApiBackend = {
       );
       return response.data;
     } catch (error) {
-      console.error(
-        `Error al obtener la categoria con ID ${categoryId}:`,
-        error
-      );
       return null;
     }
   },
@@ -56,7 +51,6 @@ const ApiBackend = {
       const response = await axios.get(`${API_BASE_URL}/posts`);
       return response.data;
     } catch (error) {
-      console.error("Error al obtener los posts:", error);
       return [];
     }
   },
@@ -66,7 +60,6 @@ const ApiBackend = {
       const response = await axios.get(`${API_BASE_URL}/post/${postId}`);
       return response.data;
     } catch (error) {
-      console.error(`Error al obtener el post con ID ${postId}:`, error);
       return null;
     }
   },
@@ -76,7 +69,6 @@ const ApiBackend = {
       const response = await axios.get(`${API_BASE_URL}/comments`);
       return response.data;
     } catch (error) {
-      console.error("Error al obtener los comentarios:", error);
       return [];
     }
   },
@@ -89,7 +81,6 @@ const ApiBackend = {
       );
       return response.data;
     } catch (error) {
-      console.error("Error al crear el comentario:", error);
       return null;
     }
   },
@@ -105,7 +96,6 @@ const ApiBackend = {
         });
         return response.data;
     } catch (error) {
-        console.error('Error al crear la categoría:', error);
         return null;
     }
 },
@@ -119,7 +109,6 @@ async updateCategory(categoryId, updatedCategoryData) {
         });
         return response.data;
     } catch (error) {
-        console.error(`Error al actualizar la categoría con ID ${categoryId}:`, error);
         return null;
     }
 },
@@ -134,7 +123,6 @@ async deleteCategory(categoryId) {
         });
         return response.data;
     } catch (error) {
-        console.error(`Error al eliminar la categoría con ID ${categoryId}:`, error);
         return null;
     }
 },
@@ -148,7 +136,6 @@ async createPost(PostData) {
         });
         return response.data;
     } catch (error) {
-        console.error('Error al crear el post:', error);
         return null;
     }
 },
@@ -162,7 +149,6 @@ async updatePost(postId, updatedPostData) {
         });
         return response.data;
     } catch (error) {
-        console.error(`Error al actualizar el post con ID ${postId}:`, error);
         return null;
     }
 },
@@ -176,7 +162,6 @@ async deletePost(postId) {
         });
         return response.data;
     } catch (error) {
-        console.error(`Error al eliminar el post con ID ${postId}:`, error);
         return null;
     }
 },
@@ -190,7 +175,6 @@ async deleteComment(commentId) {
         });
         return response.data;
     } catch (error) {
-        console.error(`Error al eliminar el comentario con ID ${commentId}:`, error);
         return null;
     }
 },
