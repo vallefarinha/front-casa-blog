@@ -196,5 +196,4 @@ async deleteComment(commentId) {
 },
 
 };
-
 export default ApiBackend;
