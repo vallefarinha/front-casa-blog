@@ -56,7 +56,24 @@ function Post() {
               </div>
             </div>
           </div>
-          <Comment />
+          <div className="bg-white p-4 mt-5 mb-10">
+            <h2 className="font-poppinsBold text-primaryColor mt-3 mb-5">
+              Comentarios
+            </h2>
+            <div className="max-h-[420px] overflow-y-auto">
+              {postData.comments.map((comment) => (
+                <>
+                  <Comment
+                    author={comment.author}
+                    created={comment.created_at}
+                    content={comment.content}
+                  />
+                  <hr className="border-gray-300 my-6" />
+                </>
+              ))}
+            </div>
+          </div>
+
           <CommentInput />
         </>
       ) : (
