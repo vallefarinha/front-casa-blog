@@ -171,65 +171,70 @@ function TableAdmin() {
                   </tr>
                 </thead>
                 <tbody>
-                {posts.map((post, index) => {
-  console.log("Post:", post);
+                  {posts.map((post, index) => {
+                    console.log("Post:", post);
 
-  return (
-    <tr key={post.id} className="border-b dark:border-gray-700">
-      <th
-        scope="row"
-        className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-      >
-        {post.title}
-      </th>
-      <td className="px-4 py-3">{post.content}</td>
-      <td className="px-4 py-3">{post.category_id}</td>
-      <td className="px-4 py-3">
-        {post.image && (
-          <img
-            src={post.image}
-            alt={post.title}
-            className="w-24 h-24"
-          />
-        )}
-      </td>
-      <td className="px-4 py-3">
-        <div className="relative inline-block text-left">
-          <button
-            id={`editDeleteDropdownButton-${index}`}
-            onClick={toggleEditDeleteDropdown}
-            aria-expanded={isEditDeleteDropdownOpen ? "true" : "false"}
-            className="ml-3 md:ml-0 flex items-center justify-center text-gray-900 focus:outline-none bg-white rounded-lg focus:z-10 focus:ring-4 focus:ring-gray-200"
-            type="button"
-          >
-            ...
-          </button>
-          <div
-            id={`editDeleteDropdown-${index}`}
-            className={`${
-              isEditDeleteDropdownOpen ? "block" : "hidden"
-            } absolute left-0 top-6 w-24 p-3 bg-white rounded-lg shadow`}
-          >
-            <div className="py-1">
-              <button
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                onClick={openEditModal}
-              >
-                Edit
-              </button>
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-              >
-                Delete
-              </a>
-            </div>
-          </div>
-        </div>
-      </td>
-    </tr>
-  );
-})}
+                    return (
+                      <tr
+                        key={post.id}
+                        className="border-b dark:border-gray-700"
+                      >
+                        <th
+                          scope="row"
+                          className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                        >
+                          {post.title}
+                        </th>
+                        <td className="px-4 py-3">{post.content}</td>
+                        <td className="px-4 py-3">{post.category_id}</td>
+                        <td className="px-4 py-3">
+                          {post.image && (
+                            <img
+                              src={post.image}
+                              alt={post.title}
+                              className="w-24 h-24"
+                            />
+                          )}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="relative inline-block text-left">
+                            <button
+                              id={`editDeleteDropdownButton-${index}`}
+                              onClick={toggleEditDeleteDropdown}
+                              aria-expanded={
+                                isEditDeleteDropdownOpen ? "true" : "false"
+                              }
+                              className="ml-3 md:ml-0 flex items-center justify-center text-gray-900 focus:outline-none bg-white rounded-lg focus:z-10 focus:ring-4 focus:ring-gray-200"
+                              type="button"
+                            >
+                              ...
+                            </button>
+                            <div
+                              id={`editDeleteDropdown-${index}`}
+                              className={`${
+                                isEditDeleteDropdownOpen ? "block" : "hidden"
+                              } absolute left-0 top-6 w-24 p-3 bg-white rounded-lg shadow`}
+                            >
+                              <div className="py-1">
+                                <button
+                                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                                  onClick={openEditModal}
+                                >
+                                  Edit
+                                </button>
+                                <a
+                                  href="#"
+                                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                                >
+                                  Delete
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
