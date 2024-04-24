@@ -1,18 +1,15 @@
 import { useState, useEffect } from "react";
 import ApiBackend from "../../services/ApiBackend.jsx";
-import SimpleAlert from '../../components/alerts/SimpleAlert.jsx';
 
-function ModalCrudEdit({ isOpen, onClose, postId, selectedPostIndex, filteredPosts }) {
+function ModalCrudEdit({ isOpen, onClose, selectedPostIndex, filteredPosts }) {
     const [categories, setCategories] = useState([]);
-    const [showAlert, setShowAlert] = useState(false);
     const [editingPostData, setEditingPostData] = useState({
         title: "",
         content: "",
         category_id: "",
         image: "",
     });
-    const [showEditAlert, setShowEditAlert] = useState(false);
-    const [alertMessage, setAlertMessage] = useState("");
+
 
     useEffect(() => {
         if (
@@ -44,14 +41,9 @@ function ModalCrudEdit({ isOpen, onClose, postId, selectedPostIndex, filteredPos
                     Array.isArray(categoriesData.categories)
                 ) {
                     setCategories(categoriesData.categories);
-                } else {
-                    setShowAlert(true);
-                    setAlertMessage("Erro ao obter categorias. Tente novamente.");
-                }
+                } 
             } catch (error) {
                 console.error("Erro ao obter categorias:", error);
-                setShowAlert(true);
-                setAlertMessage("Erro ao obter categorias. Tente novamente.");
             }
         };
 
@@ -79,14 +71,11 @@ function ModalCrudEdit({ isOpen, onClose, postId, selectedPostIndex, filteredPos
             const response = await ApiBackend.updatePost(postId, formData);
             if (response) {
                 console.log("Post atualizado com sucesso:", response);
-                setShowEditAlert(true);
             } else {
                 console.error("Erro ao atualizar o post.");
-                setShowEditAlert(true);
             }
         } catch (error) {
             console.error("Erro ao atualizar o post:", error);
-            setShowEditAlert(true);
         }
     };
 
@@ -115,7 +104,6 @@ function ModalCrudEdit({ isOpen, onClose, postId, selectedPostIndex, filteredPos
                                 X
                             </button>
                         </div>
-                        {showAlert && <SimpleAlert icon="error" text={alertMessage} />}
                         <form className="p-4 md:p-5" onSubmit={handleEditSubmit}>
                             <div className="grid gap-4 mb-4 grid-cols-2">
                                 <div className="col-span-2">
@@ -146,7 +134,7 @@ function ModalCrudEdit({ isOpen, onClose, postId, selectedPostIndex, filteredPos
                                 Editar post
                             </button>
                         </form>
-                        {showEditAlert && <SimpleAlert icon="error" text="Erro ao atualizar o post. Tente novamente." />}
+            
                     </div>
                 </div>
             </div>
