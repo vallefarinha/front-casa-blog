@@ -49,6 +49,7 @@ function TableAdmin() {
   };
 
 const openEditModal = (postId) => {
+  console.log(postId);
   setSelectedPostId(postId);
   setIsEditModalOpen(true);
 };
@@ -129,9 +130,9 @@ const openEditModal = (postId) => {
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                           d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                          clip-rule="evenodd"
+                          clipRule="evenodd"
                         />
                       </svg>
                     </div>
@@ -280,7 +281,7 @@ const openEditModal = (postId) => {
                               <div className="py-1">
                                 <button
                                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                                  onClick={openEditModal}
+                                  onClick={() => openEditModal(post.id)}
                                 >
                                   Edit
                                 </button>
@@ -374,7 +375,7 @@ const openEditModal = (postId) => {
             </nav>
           </div>
         </div>
-        <ModalCrudEdit isOpen={isEditModalOpen} onClose={closeEditModal} />
+        <ModalCrudEdit isOpen={isEditModalOpen} onClose={closeEditModal} selectedPostIndex={selectedPostId}  />
       </section>
     </div>
   );
