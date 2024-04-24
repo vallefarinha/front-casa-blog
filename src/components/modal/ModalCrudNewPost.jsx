@@ -5,38 +5,28 @@ import SimpleAlert from '../../components/alerts/SimpleAlert.jsx';
 function ModalCrudNewPost({ isOpen, onClose }) {
   const [categories, setCategories] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
-  const [editingPostData, setEditingPostData] = useState({
+  const [postData, setPostData] = useState({
     title: "",
     content: "",
     category_id: "",
+    author: "Casa de Acogida de la Guia",
     image: "",
   });
-  const [showEditAlert, setShowEditAlert] = useState(false);
-  const [selectedPostIndex, setSelectedPostIndex] = useState(null);
-  const [filteredPosts, setFilteredPosts] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [alertMessage, setAlertMessage] = useState("");
-
-  useEffect(() => {
-    if (selectedPostIndex !== null) {
-      const postToEdit = filteredPosts[selectedPostIndex];
-      setEditingPostData({
-        title: postToEdit.title,
-        content: postToEdit.content,
-        category_id: postToEdit.category_id,
-        image: postToEdit.image,
-      });
-    }
-  }, [selectedPostIndex, filteredPosts]);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const categoriesData = await ApiBackend.getAllCategories();
+        console.log("Categories data:", categoriesData);
+
         if (
           categoriesData.categories &&
           Array.isArray(categoriesData.categories)
         ) {
+          console.log("Categories data is defined correctly");
+
           setCategories(categoriesData.categories);
         } else {
           setShowAlert(true);
@@ -52,40 +42,58 @@ function ModalCrudNewPost({ isOpen, onClose }) {
     fetchCategories();
   }, []);
 
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditingPostData({ ...editingPostData, [name]: value });
-  };
-  
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setEditingPostData({ ...editingPostData, image: file });
-  };
-  
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
 
-  const handleEditSubmit = async (e) => {
+    if (name === "author") {
+      setPostData({ ...postData, [name]: "Casa de Acogida de la Guia" });
+    } else if (name === "category") {
+      // Atualiza o estado com o ID da categoria selecionada
+      setPostData({ ...postData, category_id: value });
+    } else if (name === "image") {
+      if (files && files.length > 0) {
+        // Atualiza o estado com a imagem selecionada
+        setImageFile(files[0]);
+      }
+    } else {
+      setPostData({ ...postData, [name]: value });
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("title", editingPostData.title);
-      formData.append("content", editingPostData.content);
-      formData.append("category_id", editingPostData.category_id);
-      formData.append("image", editingPostData.image);
-  
-      const response = await ApiBackend.updatePost(postId, formData);
+
+      formData.append("title", postData.title);
+      formData.append("content", postData.content);
+      formData.append("category_id", postData.category_id);
+      formData.append("author", postData.author);
+
+      formData.append("image", imageFile);
+
+      console.log("Dados do post a serem enviados:", formData);
+
+      const response = await ApiBackend.createPost(formData);
+
+      console.log("Resposta do servidor:", response);
+
       if (response) {
-        console.log("Post atualizado com sucesso:", response);
-        setShowEditAlert(true);
+        console.log("Post criado com sucesso:", response);
+        setShowAlert(true);
+        setAlertMessage("Post criado com sucesso.");
+        onClose();
       } else {
-        console.error("Erro ao atualizar o post.");
-        setShowEditAlert(true);
+        setShowAlert(true);
+        setAlertMessage("Erro ao criar post. Tente novamente.");
       }
     } catch (error) {
-      console.error("Erro ao atualizar o post:", error);
-      setShowEditAlert(true);
+      console.error("Erro ao criar post:", error);
+      setShowAlert(true);
+      setAlertMessage("Erro ao criar post. Tente novamente.");
     }
   };
-  
+
   return (
     <>
       <div
@@ -98,8 +106,8 @@ function ModalCrudNewPost({ isOpen, onClose }) {
       >
         <div className="relative p-4 w-full max-w-3xl max-h-full">
           <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-            <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Nuevo post
               </h3>
               <button
@@ -112,19 +120,40 @@ function ModalCrudNewPost({ isOpen, onClose }) {
               </button>
             </div>
             {showAlert && <SimpleAlert icon="error" text={alertMessage} />}
-            <form className="p-4 md:p-5" onSubmit={handleEditSubmit}>
+            <form className="p-4 md:p-5" onSubmit={handleSubmit}>
               <div className="grid gap-4 mb-4 grid-cols-2">
                 <div className="col-span-2">
-                  <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Título</label>
-                  <input type="text" name="title" id="name" value={editingPostData.title} onChange={handleEditChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Digite o título do post" required="" />
-                </div>
-                <div className="col-span-2">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="file_input">Upload file</label>
-                  <input className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file" onChange={handleImageChange} />
+                  <label
+                    htmlFor="title"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Título
+                  </label>
+                  <input
+                    type="text"
+                    name="title"
+                    id="title"
+                    value={postData.title}
+                    onChange={handleChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="Digite o título do post"
+                    required
+                  />
                 </div>
                 <div className="col-span-2 sm:col-span-1">
-                  <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Categoría</label>
-                  <select id="category" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value={editingPostData.category_id} onChange={handleEditChange}>
+                  <label
+                    htmlFor="category"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Categoria
+                  </label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={postData.category_id}
+                    onChange={handleChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  >
                     <option value="">Categoria</option>
                     {categories.map((category) => (
                       <option key={category.id} value={category.id}>
@@ -134,20 +163,51 @@ function ModalCrudNewPost({ isOpen, onClose }) {
                   </select>
                 </div>
                 <div className="col-span-2">
-                  <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contenido</label>
-                  <textarea id="description" rows="4" value={editingPostData.content} onChange={handleEditChange} className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe el post aqui"></textarea>
+                  <label
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    htmlFor="file_input"
+                  >
+                    Upload file
+                  </label>
+                  <input
+                    className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                    id="file_input"
+                    type="file"
+                    onChange={(e) => {
+                      console.log("Arquivo da imagem:", e.target.files[0]);
+                      setImageFile(e.target.files[0]);
+                    }}
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label
+                    htmlFor="content"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Contenido
+                  </label>
+                  <textarea
+                    id="content"
+                    name="content"
+                    rows="4"
+                    value={postData.content}
+                    onChange={handleChange}
+                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Escribe el post aqui"
+                  ></textarea>
                 </div>
               </div>
-              <button type="submit" className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                Editar post
+              <button
+                type="submit"
+                className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Crear
               </button>
             </form>
-            {showEditAlert && <SimpleAlert icon="error" text="Erro ao atualizar o post. Tente novamente." />}
           </div>
         </div>
-      </div>
+        </div>
     </>
   );
 }
-
 export default ModalCrudNewPost;
