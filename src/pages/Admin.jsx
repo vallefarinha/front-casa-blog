@@ -20,21 +20,20 @@ function Admin() {
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
       if (token) {
         setShowLogoutMessage(true);
-        await ApiBackend.logout(token);
-        localStorage.removeItem("token");
+        await ApiBackend.logout(token); 
+        localStorage.removeItem('token'); 
         setTimeout(() => {
           setShowLogoutMessage(false);
-          navigate("/");
-        }, 2000);
+          navigate('/');
+        }, 3000);
       }
     } catch (error) {
-      console.error("Erro durante o logout:", error);
+      console.error('Error durante el logout:', error);
     }
   };
-
   return (
     <>
       <div className="">
