@@ -3,7 +3,7 @@ import ApiBackend from "../../services/ApiBackend.jsx";
 import SimpleAlert from "../../components/alerts/SimpleAlert.jsx";
 import { Spinner } from "flowbite-react";
 
-function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
+function ModalCrudEdit({ isOpen, onClose, selectedPostIndex , onSubmit}) {
   
   const [categories, setCategories] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
@@ -29,7 +29,7 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
         setCategories(getCategories.categories);
       } catch (error) {
         console.error("Error al obtener la información:", error);
-        setShowAlert(true);
+        // setShowAlert(true);
       }
     };
 
@@ -64,17 +64,18 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
 
       await ApiBackend.updatePost(selectedPostIndex, formData);
       setSuccessMessage(
-        "Post actualizado exitosamente, la página se recargará"
+        "Post actualizado exitosamente"
       );
       setTimeout(() => {
-        window.location.reload();
-      }, 5000);
+        setSuccessMessage(null);
+      }, 4000);
+      onSubmit();
     } catch (error) {
       console.error("Error al atualizar el post:", error);
-      setErrorMessage("Error al actualizar el post");
+      setErrorMessage("Error al actualizar el post, intentelo de nuevo más tarde");
       setTimeout(() => {
         setErrorMessage(null);
-      }, 10000);
+      }, 6000);
     }
   };
 
@@ -201,7 +202,7 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
                 </div>
                 <button
                   type="submit"
-                  className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  className="text-white inline-flex items-center mb-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
                   Editar post
                 </button>

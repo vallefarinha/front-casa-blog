@@ -22,9 +22,13 @@ function TableAdmin() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
+    fetchData();
+  }, []); 
+
+ 
     const fetchData = async () => {
       try {
-        const postsData = await ApiBackend.getAllPost(selectedCategory);
+        const postsData = await ApiBackend.getAllPost();
         setPosts(postsData.posts);
         const categoriesData = await ApiBackend.getAllCategories();
         setCategories(categoriesData.categories);
@@ -35,8 +39,10 @@ function TableAdmin() {
       }
     };
 
-    fetchData();
-  }, [selectedCategory]);
+    const handleModalSubmit = async () => {
+      await fetchData(); 
+    };
+  
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -47,7 +53,6 @@ function TableAdmin() {
   };
 
   const openEditModal = (postId) => {
-    console.log(postId);
     setSelectedPostId(postId);
     setIsEditModalOpen(true);
   };
@@ -82,7 +87,7 @@ function TableAdmin() {
       (post) => post.category_id.toString() === selectedCategory
     );
   }
-  console.log("Posts filtrados pela categoria:", filteredPosts);
+  
   if (searchText !== "") {
     filteredPosts = filteredPosts.filter((post) =>
       Object.values(post).some(
@@ -124,7 +129,7 @@ function TableAdmin() {
                         aria-hidden="true"
                         className="w-5 h-5 text-gray-500 dark:text-gray-400"
                         fill="currentColor"
-                        viewbox="0 0 20 20"
+                        viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
@@ -153,7 +158,7 @@ function TableAdmin() {
                 >
                   +Añadir Post
                 </button>
-                <ModalCrud isOpen={isModalOpen} onClose={closeModal} />
+                <ModalCrud isOpen={isModalOpen} onClose={closeModal} onSubmit={handleModalSubmit}/>
                 <div className="flex flex-col items-center space-x-3 w-full md:w-auto">
                   <button
                     id="filterDropdownButton"
@@ -377,8 +382,8 @@ function TableAdmin() {
                 )}
                 <li>
                   <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 0}
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPosts.length < itemsPerPage}
                     className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                   >
                     <span className="sr-only">Next</span>
@@ -386,13 +391,13 @@ function TableAdmin() {
                       className="w-5 h-5"
                       aria-hidden="true"
                       fill="currentColor"
-                      viewbox="0 0 20 20"
+                      viewBox="0 0 20 20"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       />
                     </svg>
                   </button>
@@ -405,6 +410,7 @@ function TableAdmin() {
           isOpen={isEditModalOpen}
           onClose={closeEditModal}
           selectedPostIndex={selectedPostId}
+          onSubmit={handleModalSubmit}
         />
       </section>
     </div>
