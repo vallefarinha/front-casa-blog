@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import ModalCrud from "../modal/ModalCrudNewPost";
 import ModalCrudEdit from "../modal/ModalCrudEdit";
 import ApiBackend from "../../services/ApiBackend.jsx";
+import AreYouSure from "../alerts/AreYouSure.jsx";
+
 
 function TableAdmin() {
   const [posts, setPosts] = useState([]);
@@ -20,6 +22,7 @@ function TableAdmin() {
   const [isEditDeleteDropdownOpen, setIsEditDeleteDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [confirm, setConfirm] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,6 +113,25 @@ const openEditModal = (postId) => {
 
   const currentPosts = filteredPosts.slice(startIndex, endIndex);
   const postId = filteredPosts[selectedPostIndex]?.id;
+
+  const handleDelete = async (id) => {
+    // Mostrar alerta de confirmación
+    const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este post?");
+  
+    if (confirmDelete) {
+      try {        
+        await ApiBackend.deletePost(id);
+  
+        setPosts((prevPosts) =>
+        prevPosts.filter((post) => post.id !== id)
+        );
+  
+        console.log(`Post con ID ${id} eliminado con éxito`);
+      } catch (error) {
+        console.error(`Error al eliminar el post con ID ${id}:`, error);
+      }
+    }
+  };
 
   return (
     <div className="w-[85%] ml-[5%]">
@@ -292,6 +314,7 @@ const openEditModal = (postId) => {
                                 <a
                                   href="#"
                                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                                  onClick={() => handleDelete(post.id)}
                                 >
                                   Delete
                                 </a>
