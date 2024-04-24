@@ -4,7 +4,7 @@ import SimpleAlert from "../../components/alerts/SimpleAlert.jsx";
 import { Spinner } from "flowbite-react";
 
 function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
-  console.log(selectedPostIndex);
+  
   const [categories, setCategories] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
   const [showEditAlert, setShowEditAlert] = useState(false);
@@ -25,13 +25,11 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
       try {
         const postInfo = await ApiBackend.getPostById(selectedPostIndex);
         setPostData(postInfo.post);
-        console.log(postData);
         const getCategories = await ApiBackend.getAllCategories();
         setCategories(getCategories.categories);
       } catch (error) {
         console.error("Error al obtener la información:", error);
         setShowAlert(true);
-        setAlertMessage("Error al obtener la información. Intente nuevamente.");
       }
     };
 
@@ -45,7 +43,6 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
 
   const handleImageChange = (e) => {
     const selectedImage = e.target.files[0];
-    console.log(selectedImage);
     if (selectedImage) {
       setPostData({ ...postData, image: selectedImage });
     }
@@ -53,7 +50,6 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    console.log("Datos del post a enviar:", postData);
     try {
       const postDataWithoutImage = { ...postData };
       if (!postData.image) {
@@ -67,7 +63,6 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
       formData.append("image", postData.image);
 
       await ApiBackend.updatePost(selectedPostIndex, formData);
-      console.log("actualizado correctamente");
       setSuccessMessage(
         "Post actualizado exitosamente, la página se recargará"
       );
@@ -108,7 +103,7 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
                 X
               </button>
             </div>
-            {showAlert && <SimpleAlert icon="error" text={alertMessage} />}
+            {/* {showAlert && <SimpleAlert icon="error" text={alertMessage} />} */}
             {postData ? (
               <form
                 className="p-4 md:p-5"
