@@ -203,7 +203,7 @@ function TableComment() {
                             className="block bg-primaryColor px-4 py-2 text-sm text-LetterColor rounded-xl font-poppinsBold hover:bg-secondaryColor"
                             onClick={() => handleDelete(comment.id)}
                           >
-                            Delete
+                            Eliminar
                           </button>
                         </td>
                       </tr>
