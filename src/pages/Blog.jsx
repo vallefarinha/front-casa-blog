@@ -1,13 +1,10 @@
 import React from "react";
-import TitleHistory from "../components/title/TitleHistory.jsx";
 import Title from "../components/title/Title.jsx";
 import Search from "../components/search/Search.jsx";
 import PostCard from "../components/cards/blog/card-post/PostCard.jsx";
-import sunset from "../assets/images/sunset.png";
 import Pagination from "../components/pagination/Pagination.jsx";
 import { useState, useEffect } from "react";
 import { IoFilter } from "react-icons/io5";
-import JumboCard from "../components/cards/blog/card-post/JumboCard.jsx";
 import ApiBackend from "../services/ApiBackend.jsx";
 
 const Blog = () => {
@@ -124,6 +121,7 @@ const Blog = () => {
             {currentPosts.map((post) => (
               <PostCard
                 key={post.id}
+                id={post.id}
                 img={post.image}
                 imgDescription={post.title}
                 title={post.title}
