@@ -48,11 +48,9 @@ function ModalCrudNewPost({ isOpen, onClose }) {
     if (name === "author") {
       setPostData({ ...postData, [name]: "Casa de Acogida de la Guia" });
     } else if (name === "category") {
-      // Atualiza o estado com o ID da categoria selecionada
       setPostData({ ...postData, category_id: value });
     } else if (name === "image") {
       if (files && files.length > 0) {
-        // Atualiza o estado com a imagem selecionada
         setImageFile(files[0]);
       }
     } else {
