@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/no-unknown-property */
+
 import React, { useState, useEffect } from "react";
 import ModalCrud from "../modal/ModalCrudNewPost";
 import ModalCrudEdit from "../modal/ModalCrudEdit";
@@ -18,7 +17,8 @@ function TableAdmin() {
   const [selectedPostIndex, setSelectedPostIndex] = useState(null);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
-  const [isEditDeleteDropdownOpen, setIsEditDeleteDropdownOpen] = useState(false);
+  const [isEditDeleteDropdownOpen, setIsEditDeleteDropdownOpen] =
+    useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [confirm, setConfirm] = useState(null);
@@ -48,25 +48,21 @@ function TableAdmin() {
     setIsModalOpen(false);
   };
 
-const openEditModal = (postId) => {
-  console.log(postId);
-  setSelectedPostId(postId);
-  setIsEditModalOpen(true);
-};
+  const openEditModal = (postId) => {
+    console.log(postId);
+    setSelectedPostId(postId);
+    setIsEditModalOpen(true);
+  };
   const closeEditModal = () => {
     setIsEditModalOpen(false);
   };
 
   const toggleEditDeleteDropdown = (postId) => {
-    setSelectedPostIndex((prevId) =>
-        prevId === postId ? null : postId
-    );
-};
+    setSelectedPostIndex((prevId) => (prevId === postId ? null : postId));
+  };
   const toggleFilterDropdown = () => {
     setIsFilterDropdownOpen(!isFilterDropdownOpen);
   };
-
-
 
   const handleCategoryChange = (e, categoryId) => {
     const { checked } = e.target;
@@ -190,7 +186,7 @@ const openEditModal = (postId) => {
                   className="flex items-center justify-center text-LetterColor border bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2"
                   onClick={openModal}
                 >
-                  +Add product
+                  +Añadir Post
                 </button>
                 <ModalCrud isOpen={isModalOpen} onClose={closeModal} />
                 <div className="flex flex-col items-center space-x-3 w-full md:w-auto">
@@ -201,7 +197,7 @@ const openEditModal = (postId) => {
                     data-dropdown-toggle="filterDropdown"
                     className="md:w-auto flex items-center justify-left py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                   >
-                    Filtrar por categoria
+                    Filtrar por Categoria
                   </button>
 
                   <div
@@ -248,7 +244,7 @@ const openEditModal = (postId) => {
               </div>
             </div>
             <div className="overflow-y-auto">
-            <table className="w-full md:w-[97%] mx-auto text-sm text-left text-gray-500 p-6 m-6">
+              <table className="w-full md:w-[97%] mx-auto text-sm text-left text-gray-500 p-6 m-6">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                   <tr>
                     <th scope="col" className="px-4 py-3">
@@ -294,7 +290,7 @@ const openEditModal = (postId) => {
                         <td className="px-4 py-3">
                           {post.image && (
                             <img
-                              src={"http://localhost:8000/images/" +post.image}
+                              src={"http://localhost:8000/images/" + post.image}
                               alt={post.title}
                               className="w-24 h-24"
                             />
@@ -370,17 +366,18 @@ const openEditModal = (postId) => {
               <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
                 Showing
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  {startIndex + 1}-{endIndex}
+                  {"  " + startIndex + 1}-{endIndex + "  "}
                 </span>
                 of
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  {filteredPosts.length}
+                  {"  " + filteredPosts.length}
                 </span>
               </span>
               <ul className="inline-flex items-stretch -space-x-px">
                 <li>
-                  <a
-                    href="#"
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 0}
                     className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                   >
                     <span className="sr-only">Previous</span>
@@ -397,7 +394,7 @@ const openEditModal = (postId) => {
                         clipRule="evenodd"
                       />
                     </svg>
-                  </a>
+                  </button>
                 </li>
                 {Array.from(
                   { length: Math.ceil(filteredPosts.length / itemsPerPage) },
@@ -415,10 +412,11 @@ const openEditModal = (postId) => {
                     </li>
                   )
                 )}
-             <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                <li>
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 0}
+                    className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                   >
                     <span className="sr-only">Next</span>
                     <svg
@@ -434,13 +432,17 @@ const openEditModal = (postId) => {
                         clip-rule="evenodd"
                       />
                     </svg>
-                  </a>
+                  </button>
                 </li>
               </ul>
             </nav>
           </div>
         </div>
-        <ModalCrudEdit isOpen={isEditModalOpen} onClose={closeEditModal} selectedPostIndex={selectedPostId}  />
+        <ModalCrudEdit
+          isOpen={isEditModalOpen}
+          onClose={closeEditModal}
+          selectedPostIndex={selectedPostId}
+        />
       </section>
     </div>
   );
