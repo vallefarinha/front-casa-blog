@@ -14,6 +14,7 @@ import ThanksForSignIn from "../pages/ThanksForSignIn";
 import SanJose from "../pages/SanJose";
 import Login from "../pages/Login";
 import Post from "../pages/Post";
+import { useEffect, useState } from "react";
 
 
 export default function Router() {
