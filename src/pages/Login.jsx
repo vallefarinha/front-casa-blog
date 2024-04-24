@@ -4,11 +4,12 @@ import Title from '../components/title/Title.jsx';
 import SimpleAlert from '../components/alerts/SimpleAlert.jsx';
 import { useNavigate } from 'react-router-dom';
 
+
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showAlert, setShowAlert] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,8 +24,8 @@ function Login() {
     try {
       const response = await ApiBackend.login({ email, password });
       console.log(response);
-      localStorage.setItem('token', response.token); 
-      setIsLoggedIn(true); 
+      localStorage.setItem('token', response.token);
+      setIsLoggedIn(true);
       navigate("/admin");
     } catch (error) {
       console.error('Erro de login:', error);
