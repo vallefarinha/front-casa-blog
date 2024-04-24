@@ -1,34 +1,26 @@
 import React, { useState, useEffect } from "react";
-import ModalCrud from "../modal/ModalCrudNewPost";
-import ModalCrudEdit from "../modal/ModalCrudEdit";
+import { Link } from "react-router-dom";
+import ModalCategoryCreate from "../modal/ModalCategoryCreate.jsx";
+import ModalCategoryEdit from "../modal/ModalCategoryEdit.jsx";
 import ApiBackend from "../../services/ApiBackend.jsx";
-import Swal from "sweetalert2";
 
-function TableAdmin() {
-  const [posts, setPosts] = useState([]);
+function TableCategories() {
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(6);
   const [selectedPostIndex, setSelectedPostIndex] = useState(null);
-  const [selectedPostId, setSelectedPostId] = useState(null);
-  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
-  const [isEditDeleteDropdownOpen, setIsEditDeleteDropdownOpen] =
-    useState(false);
+  const [selectedcategoryId, setCategoryId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [confirm, setConfirm] = useState(null);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, []); 
 
   const fetchData = async () => {
     try {
-      const postsData = await ApiBackend.getAllPost();
-      setPosts(postsData.posts);
       const categoriesData = await ApiBackend.getAllCategories();
       setCategories(categoriesData.categories);
     } catch (error) {
@@ -39,7 +31,7 @@ function TableAdmin() {
   };
 
   const handleModalSubmit = async () => {
-    await fetchData();
+    await fetchData(); 
   };
 
   const openModal = () => {
@@ -50,28 +42,12 @@ function TableAdmin() {
     setIsModalOpen(false);
   };
 
-  const openEditModal = (postId) => {
-    setSelectedPostId(postId);
+  const openEditModal = (categoryId) => {
+    setCategoryId(categoryId);
     setIsEditModalOpen(true);
   };
   const closeEditModal = () => {
     setIsEditModalOpen(false);
-  };
-
-  const toggleEditDeleteDropdown = (postId) => {
-    setSelectedPostIndex((prevId) => (prevId === postId ? null : postId));
-  };
-  const toggleFilterDropdown = () => {
-    setIsFilterDropdownOpen(!isFilterDropdownOpen);
-  };
-
-  const handleCategoryChange = (e, categoryId) => {
-    const { checked } = e.target;
-    if (checked) {
-      setSelectedCategory(categoryId.toString());
-    } else {
-      setSelectedCategory("");
-    }
   };
 
   const handleSearchChange = (e) => {
@@ -79,16 +55,11 @@ function TableAdmin() {
     setSearchText(value);
   };
 
-  let filteredPosts = posts;
-  if (selectedCategory !== "") {
-    filteredPosts = filteredPosts.filter(
-      (post) => post.category_id.toString() === selectedCategory
-    );
-  }
+  let filterCategory = categories;
 
   if (searchText !== "") {
-    filteredPosts = filteredPosts.filter((post) =>
-      Object.values(post).some(
+    filterCategory = filterCategory.filter((category) =>
+      Object.values(category).some(
         (value) =>
           value &&
           value.toString().toLowerCase().includes(searchText.toLowerCase())
@@ -97,7 +68,7 @@ function TableAdmin() {
   }
 
   const handlePageChange = (selectedPage) => {
-    const totalPages = Math.ceil(filteredPosts.length / itemsPerPage);
+    const totalPages = Math.ceil(filterCategory.length / itemsPerPage);
     if (selectedPage >= 0 && selectedPage < totalPages) {
       setCurrentPage(selectedPage);
       window.scrollTo(0, 0);
@@ -105,44 +76,10 @@ function TableAdmin() {
   };
 
   const startIndex = currentPage * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, filteredPosts.length);
+  const endIndex = Math.min(startIndex + itemsPerPage, filterCategory.length);
 
-  const currentPosts = filteredPosts.slice(startIndex, endIndex);
-  const postId = filteredPosts[selectedPostIndex]?.id;
-
-  const handleDelete = async (id) => {
-    const confirmDelete = await Swal.fire({
-      title: "Quieres eliminar el post?",
-      text: "No puedes volver esta acción!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Eliminar",
-    });
-
-    if (confirmDelete.isConfirmed) {
-      try {
-        await ApiBackend.deletePost(id);
-        fetchData();
-
-        Swal.fire({
-          title: "Eliminar",
-          text: "El post fue eliminado",
-          icon: "success",
-        });
-
-        console.log(`Post con ID ${id} eliminado con éxito`);
-      } catch (error) {
-        console.error(`Error al eliminar el post con ID ${id}:`, error);
-        Swal.fire({
-          title: "Error!",
-          text: `Error al eliminar el post con ID ${id}`,
-          icon: "error",
-        });
-      }
-    }
-  };
+  const currentCategories = filterCategory.slice(startIndex, endIndex);
+  const categoryId = filterCategory[selectedPostIndex]?.id;
 
   return (
     <div className="w-[95%]">
@@ -188,65 +125,9 @@ function TableAdmin() {
                   className="flex items-center justify-center text-LetterColor border bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2"
                   onClick={openModal}
                 >
-                  +Añadir Post
+                  +Añadir Categoria
                 </button>
-                <ModalCrud
-                  isOpen={isModalOpen}
-                  onClose={closeModal}
-                  onSubmit={handleModalSubmit}
-                />
-                <div className="flex flex-col items-center space-x-3 w-full md:w-auto">
-                  <button
-                    id="filterDropdownButton"
-                    onClick={toggleFilterDropdown}
-                    aria-expanded={isFilterDropdownOpen ? "true" : "false"}
-                    data-dropdown-toggle="filterDropdown"
-                    className="md:w-auto flex items-center justify-left py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                  >
-                    Filtrar por Categoria
-                  </button>
-
-                  <div
-                    id="filterDropdown"
-                    className={`z-10 ${
-                      isFilterDropdownOpen ? "block" : "hidden"
-                    } absolute right-0 mt-10 w-48 p-3 bg-white rounded-lg shadow`}
-                  >
-                    <h6 className="mb-3 text-sm font-medium text-gray-900 ">
-                      Elija una categoria
-                    </h6>
-                    <ul
-                      className="space-y-2 text-sm p-4"
-                      aria-labelledby="filterDropdownButton"
-                    >
-                      {categories.map((category) => (
-                        <li className="flex items-center" key={category.id}>
-                          <input
-                            id={category.id}
-                            type="checkbox"
-                            value={category.id}
-                            onChange={(e) =>
-                              handleCategoryChange(e, category.id)
-                            }
-                            className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                          />
-                          <label
-                            htmlFor={category.id}
-                            className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                          >
-                            {category.name} (
-                            {
-                              posts.filter(
-                                (post) => post.category_id === category.id
-                              ).length
-                            }
-                            )
-                          </label>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
+                <ModalCategoryCreate isOpen={isModalOpen} onClose={closeModal} onSubmit={handleModalSubmit}/>
               </div>
             </div>
             <div className="overflow-y-auto">
@@ -254,19 +135,10 @@ function TableAdmin() {
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                   <tr>
                     <th scope="col" className="px-4 py-3">
-                      Título
+                      ID
                     </th>
                     <th scope="col" className="px-4 py-3">
-                      Contenido
-                    </th>
-                    <th scope="col" className="px-4 py-3">
-                      Categoría
-                    </th>
-                    <th scope="col" className="px-4 py-3">
-                      Autor
-                    </th>
-                    <th scope="col" className="px-4 py-3">
-                      Imagen
+                      NOMBRE DE LA CATEGORIA
                     </th>
                     <th scope="col" className="px-4 py-3">
                       Acción
@@ -274,49 +146,32 @@ function TableAdmin() {
                   </tr>
                 </thead>
                 <tbody>
-                  {currentPosts.map((post) => {
+                  {currentCategories.map((category) => {
                     return (
                       <tr
-                        key={post.id}
+                        key={category.id}
                         className="border-b dark:border-gray-700"
                       >
                         <th
                           scope="row"
                           className="px-4 py-3 font-medium text-gray-900 whitespace-wrap dark:text-white"
                         >
-                          {post.title}
+                          {category.id}
+                        </th>
+                        <th
+                          scope="row"
+                          className="px-4 py-3 font-medium text-gray-900 whitespace-wrap dark:text-white"
+                        >
+                          {category.name}
                         </th>
                         <td className="px-4 py-3">
-                          {post.content.length > 50
-                            ? `${post.content.substring(0, 50)}...`
-                            : post.content}
-                        </td>{" "}
-                        <td className="px-4 py-3">{post.category_id}</td>
-                        <td className="px-4 py-3">{post.author}</td>
-                        <td className="px-4 py-3">
-                          {post.image && (
-                            <img
-                              src={"http://localhost:8000/images/" + post.image}
-                              alt={post.title}
-                              className="w-24 h-24"
-                            />
-                          )}
-                        </td>
-                        <td className="px-4 py-3">
                           <button
-                            className="block bg-secondaryColor px-4 py-2 mb-1 text-sm text-LetterColor rounded-xl font-poppinsBold hover:bg-tertiaryColor"
-                            onClick={() => openEditModal(post.id)}
+                            className="block bg-secondaryColor px-4 py-2 text-sm text-LetterColor rounded-xl font-poppinsBold hover:bg-tertiaryColor"
+                            onClick={() => openEditModal(category.id)}
                           >
                             Edit
                           </button>
-                          <button
-                            href="#"
-                            className="block bg-primaryColor px-4 py-2 text-sm text-LetterColor rounded-xl font-poppinsBold hover:bg-tertiaryColor"
-                            onClick={() => handleDelete(post.id)}
-                          >
-                            Delete
-                          </button>
-                          
+                         
                         </td>
                       </tr>
                     );
@@ -335,7 +190,7 @@ function TableAdmin() {
               </button>
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPosts.length < itemsPerPage}
+                disabled={currentCategories.length < itemsPerPage}
                 className="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg cursor-pointer"
               >
                 Próximo
@@ -352,7 +207,7 @@ function TableAdmin() {
                 </span>
                 of
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  {"  " + filteredPosts.length}
+                  {"  " + filterCategory.length}
                 </span>
               </span>
               <ul className="inline-flex items-stretch -space-x-px">
@@ -379,7 +234,7 @@ function TableAdmin() {
                   </button>
                 </li>
                 {Array.from(
-                  { length: Math.ceil(filteredPosts.length / itemsPerPage) },
+                  { length: Math.ceil(filterCategory.length / itemsPerPage) },
                   (_, i) => (
                     <li key={i}>
                       <a
@@ -397,7 +252,7 @@ function TableAdmin() {
                 <li>
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPosts.length < itemsPerPage}
+                    disabled={currentCategories.length < itemsPerPage}
                     className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                   >
                     <span className="sr-only">Next</span>
@@ -420,14 +275,14 @@ function TableAdmin() {
             </nav>
           </div>
         </div>
-        <ModalCrudEdit
+        <ModalCategoryEdit
           isOpen={isEditModalOpen}
           onClose={closeEditModal}
-          selectedPostIndex={selectedPostId}
+          categoryId={selectedcategoryId}
           onSubmit={handleModalSubmit}
         />
       </section>
     </div>
   );
 }
-export default TableAdmin;
+export default TableCategories;

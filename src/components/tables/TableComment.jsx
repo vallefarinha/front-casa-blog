@@ -1,21 +1,127 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unknown-property */
-import React, { useState } from "react";
-import { Table } from "flowbite-react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import ModalCrud from "../modal/ModalCrudNewPost";
 import ModalCrudEdit from "../modal/ModalCrudEdit";
-
+import ApiBackend from "../../services/ApiBackend.jsx";
+import Swal from 'sweetalert2';
 
 function TableComment() {
-  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(6);
+  const [selectedCommentIndex, setSelectedCommentIndex] = useState(null);
 
-  const toggleFilterDropdown = () => {
-    setIsFilterDropdownOpen(!isFilterDropdownOpen);
+
+  const fetchData = async () => {
+    try {
+      const commentsData = await ApiBackend.getAllComments();
+      setComments(commentsData.comments);
+
+      const postsData = await ApiBackend.getAllPosts();
+      setPosts(postsData.posts);
+    } catch (error) {
+      console.error("Error al obtener datos:", error);
+     
+    }
   };
 
+  useEffect(() => {
+    
+    fetchData();
+  }, []);
+
+  const handleCategoryChange = (e, categoryId) => {
+    const { checked } = e.target;
+    if (checked) {
+      setSelectedCategory(categoryId.toString());
+    } else {
+      setSelectedCategory("");
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchText(value);
+  };
+
+  let filteredComments = comments;
+  if (selectedCategory !== "") {
+    filteredComments = filteredComments.filter(
+      (comment) => comment.post_id.category_id.toString() === selectedCategory
+    );
+  }
+  console.log("Comments filtrados pela categoria:", filteredComments);
+  if (searchText !== "") {
+    filteredComments = filteredComments.filter((post) =>
+      Object.values(post).some(
+        (value) =>
+          value &&
+          value.toString().toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
+  }
+
+  const handlePageChange = (selectedPage) => {
+    const totalPages = Math.ceil(filteredComments / itemsPerPage);
+    if (selectedPage >= 0 && selectedPage < totalPages) {
+      setCurrentPage(selectedPage);
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const startIndex = currentPage * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, filteredComments.length);
+
+  const currentComments = filteredComments.slice(startIndex, endIndex);
+  const commentId = filteredComments[selectedCommentIndex]?.id;
+
+  // const currentPosts = filteredPosts.slice(startIndex, endIndex);
+  // const postId = filteredPosts[selectedPostIndex]?.id;
+
+
+
+  const handleDelete = async (id) => {
+    const confirmDelete = await Swal.fire({
+      title: "Quieres eliminar el comentario?",
+      text: "No puedes volver a esta acción!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Eliminar"
+    });
+  
+    if (confirmDelete.isConfirmed) {
+      try {  
+        await ApiBackend.deleteComment(id);
+        fetchData();
+
+        Swal.fire({
+          title: "Eliminar",
+          text: "El post fue eliminado",
+          icon: "success"
+        });
+
+  
+        console.log(`Post con ID ${id} eliminado con éxito`);
+      } catch (error) {
+        console.error(`Error al eliminar el post con ID ${id}:`, error);
+        Swal.fire({
+          title: "Error!",
+          text: `Error al eliminar el post con ID ${id}`,
+          icon: "error"
+        });
+      }
+    }
+  };
 
   return (
-    <div className="w-[75%] ml-[5%]">
+    <div className="w-[95%]">
       <section className="bg-gray-50 dark:bg-gray-900">
         <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
           <div className="bg-white relative shadow-md sm:rounded-lg">
@@ -35,9 +141,9 @@ function TableComment() {
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                           d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                          clip-rule="evenodd"
+                          clipRule="evenodd"
                         />
                       </svg>
                     </div>
@@ -47,124 +153,28 @@ function TableComment() {
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Search"
                       required=""
+                      onChange={handleSearchChange}
                     />
                   </div>
                 </form>
               </div>
-              <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-                <div className="flex flex-col items-center space-x-3 w-full md:w-auto">
-                  <button
-                    id="filterDropdownButton"
-                    onClick={toggleFilterDropdown}
-                    aria-expanded={isFilterDropdownOpen ? "true" : "false"}
-                    data-dropdown-toggle="filterDropdown"
-                    className="md:w-auto flex items-center justify-left py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                  >
-                    Filtrar
-                  </button>
-                  <div
-                    id="filterDropdown"
-                    className={`z-10 ${
-                      isFilterDropdownOpen ? "block" : "hidden"
-                    } absolute right-0 mt-10 w-48 p-3 bg-white rounded-lg shadow`}
-                  >
-                    <h6 className="mb-3 text-sm font-medium text-gray-900 ">
-                      Elija una categoría
-                    </h6>
-                    <ul
-                      className="space-y-2 text-sm"
-                      aria-labelledby="filterDropdownButton"
-                    >
-                      <li className="flex items-center">
-                        <input
-                          id="apple"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        />
-                        <label
-                          htmlFor="apple"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >
-                          Apple (56)
-                        </label>
-                      </li>
-                      <li className="flex items-center">
-                        <input
-                          id="fitbit"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        />
-                        <label
-                          htmlFor="fitbit"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >
-                          Microsoft (16)
-                        </label>
-                      </li>
-                      <li className="flex items-center">
-                        <input
-                          id="razor"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        />
-                        <label
-                          htmlFor="razor"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >
-                          Razor (49)
-                        </label>
-                      </li>
-                      <li className="flex items-center">
-                        <input
-                          id="nikon"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        />
-                        <label
-                          htmlFor="nikon"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >
-                          Nikon (12)
-                        </label>
-                      </li>
-                      <li className="flex items-center">
-                        <input
-                          id="benq"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        />
-                        <label
-                          htmlFor="benq"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >
-                          BenQ (74)
-                        </label>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+              <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0"></div>
             </div>
-            <div className="">
-              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <div className="overflow-y-auto">
+              <table className="w-full md:w-[97%] mx-auto text-sm text-left text-gray-500 p-6 m-6">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                   <tr>
                     <th scope="col" className="px-4 py-3">
-                      POST
+                      Contenido
                     </th>
                     <th scope="col" className="px-4 py-3">
-                      COMENTÁRIO
+                      Autor
                     </th>
                     <th scope="col" className="px-4 py-3">
-                      AUTOR
+                      Correo
                     </th>
                     <th scope="col" className="px-4 py-3">
-                      CORREO
+                      Título del Post
                     </th>
                     <th scope="col" className="px-4 py-3">
                       Acción
@@ -172,21 +182,63 @@ function TableComment() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b dark:border-gray-700">
-                    <th
-                      scope="row"
-                      className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                    >
-                      Apple iMac 27&#34;
-                    </th>
-                    <td className="px-4 py-3">PC</td>
-                    <td className="px-4 py-3">Apple</td>
-                    <td className="px-4 py-3">300</td>
-                    <td className="px-4 py-3">Delete</td>
-                  </tr>
+                  {currentComments.map((comment) => {
+                    // Encontre o post correspondente ao post_id do comentário
+                    const post = posts.find(
+                      (post) => post.id === comment.post_id
+                    );
+                    console.log(post);
+                    // Verifique se o post foi encontrado antes de acessar seu título
+                    const postTitle = post
+                      ? post.title
+                      : "Título não encontrado";
+
+                    return (
+                      <tr
+                        key={comment.id}
+                        className="border-b dark:border-gray-700"
+                      >
+                        <td className="px-4 py-3">
+                          {comment.content.length > 50
+                            ? `${comment.content.substring(0, 50)}...`
+                            : comment.content}
+                        </td>
+                        <td className="px-4 py-3">{comment.author}</td>
+                        <td className="px-4 py-3">{comment.email}</td>
+                        {/* Exiba o título do post em vez do ID */}
+                        <td className="px-4 py-3">{comment.post_id}</td>
+                        <td className="px-4 py-3">
+                          <button
+                            href="#"
+                            className="block bg-primaryColor px-4 py-2 text-sm text-LetterColor rounded-xl font-poppinsBold hover:bg-tertiaryColor"
+                            onClick={() => handleDelete(comment.id)}
+                          >
+                            Eliminar
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
+
+            <nav className="flex justify-between items-center mt-3 p-4">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 0}
+                className="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg cursor-pointer"
+              >
+                Anterior
+              </button>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentComments.length < itemsPerPage}
+                className="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg cursor-pointer"
+              >
+                Próximo
+              </button>
+            </nav>
             <nav
               className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
               aria-label="Table navigation"
@@ -194,11 +246,11 @@ function TableComment() {
               <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
                 Showing
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  1-10
+                  {startIndex + 1}-{endIndex}
                 </span>
                 of
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  1000
+                  {filteredComments.length}
                 </span>
               </span>
               <ul className="inline-flex items-stretch -space-x-px">
@@ -212,62 +264,37 @@ function TableComment() {
                       className="w-5 h-5"
                       aria-hidden="true"
                       fill="currentColor"
-                      viewbox="0 0 20 20"
+                      viewBox="0 0 20 20"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       />
                     </svg>
                   </a>
                 </li>
+                {Array.from(
+                  { length: Math.ceil(filteredComments.length / itemsPerPage) },
+                  (_, i) => (
+                    <li key={i}>
+                      <a
+                        href="#"
+                        onClick={() => handlePageChange(i)}
+                        className={`flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${
+                          currentPage === i ? "font-semibold" : ""
+                        }`}
+                      >
+                        {i + 1}
+                      </a>
+                    </li>
+                  )
+                )}
                 <li>
                   <a
                     href="#"
-                    className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    1
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    2
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    aria-current="page"
-                    className="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-                  >
-                    3
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    ...
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    100
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                    className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                   >
                     <span className="sr-only">Next</span>
                     <svg
@@ -293,5 +320,4 @@ function TableComment() {
     </div>
   );
 }
-
 export default TableComment;

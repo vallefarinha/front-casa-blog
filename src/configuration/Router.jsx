@@ -14,6 +14,7 @@ import ThanksForSignIn from "../pages/ThanksForSignIn";
 import SanJose from "../pages/SanJose";
 import Login from "../pages/Login";
 import Post from "../pages/Post";
+import { useEffect, useState } from "react";
 
 
 export default function Router() {
@@ -29,7 +30,7 @@ export default function Router() {
           <Route path="/news" element={<News/>}></Route> 
           <Route path="/blog" element={<Blog/>}></Route> 
           <Route path="/login" element={<Login/>}></Route> 
-          <Route path="/post" element={<Post/>}></Route> 
+          <Route path="/post/:id" element={<Post/>}></Route> 
           <Route path="/partnership" element={<Collaborate/>}></Route> 
           <Route path="/form" element={<PartnerForm/>}></Route> 
           <Route path="/admin" element={<Admin/>}></Route> 

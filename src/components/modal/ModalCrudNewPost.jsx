@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import ApiBackend from "../../services/ApiBackend.jsx";
 import SimpleAlert from '../../components/alerts/SimpleAlert.jsx';
 
-function ModalCrudNewPost({ isOpen, onClose }) {
+function ModalCrudNewPost({ isOpen, onClose, onSubmit }) {
   const [categories, setCategories] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [postData, setPostData] = useState({
     title: "",
     content: "",
@@ -19,23 +21,12 @@ function ModalCrudNewPost({ isOpen, onClose }) {
     const fetchCategories = async () => {
       try {
         const categoriesData = await ApiBackend.getAllCategories();
-        console.log("Categories data:", categoriesData);
 
-        if (
-          categoriesData.categories &&
-          Array.isArray(categoriesData.categories)
-        ) {
-          console.log("Categories data is defined correctly");
-
-          setCategories(categoriesData.categories);
-        } else {
-          setShowAlert(true);
-          setAlertMessage("Erro ao obter categorias. Tente novamente.");
-        }
+        setCategories(categoriesData.categories);
       } catch (error) {
-        console.error("Erro ao obter categorias:", error);
+        console.error("Error al obtener categorias:", error);
         setShowAlert(true);
-        setAlertMessage("Erro ao obter categorias. Tente novamente.");
+        setAlertMessage("Error al obtener categorias. Tente novamente.");
       }
     };
 
@@ -48,11 +39,9 @@ function ModalCrudNewPost({ isOpen, onClose }) {
     if (name === "author") {
       setPostData({ ...postData, [name]: "Casa de Acogida de la Guia" });
     } else if (name === "category") {
-      // Atualiza o estado com o ID da categoria selecionada
       setPostData({ ...postData, category_id: value });
     } else if (name === "image") {
       if (files && files.length > 0) {
-        // Atualiza o estado com a imagem selecionada
         setImageFile(files[0]);
       }
     } else {
@@ -64,33 +53,28 @@ function ModalCrudNewPost({ isOpen, onClose }) {
     e.preventDefault();
     try {
       const formData = new FormData();
-  
+
       formData.append("title", postData.title);
       formData.append("content", postData.content);
       formData.append("category_id", postData.category_id);
       formData.append("author", postData.author);
-      
+
       formData.append("image", imageFile);
-  
-      console.log("Dados do post a serem enviados:", formData);
-      
-      const response = await ApiBackend.createPost(formData);
-      
-      console.log("Resposta do servidor:", response);
-      
-      if (response) {
-        console.log("Post criado com sucesso:", response);
-        setShowAlert(true);
-        setAlertMessage("Post criado com sucesso.");
-        onClose();
-      } else {
-        setShowAlert(true);
-        setAlertMessage("Erro ao criar post. Tente novamente.");
-      }
+
+      await ApiBackend.createPost(formData);
+      setSuccessMessage(
+        "Post creado con exito"
+      );
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 4000);
+      onSubmit();
     } catch (error) {
       console.error("Erro ao criar post:", error);
-      setShowAlert(true);
-      setAlertMessage("Erro ao criar post. Tente novamente.");
+      setErrorMessage("Error al crear el post, intentelo de nuevo más tarde");
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 6000);
     }
   };
 
@@ -106,8 +90,8 @@ function ModalCrudNewPost({ isOpen, onClose }) {
       >
         <div className="relative p-4 w-full max-w-3xl max-h-full">
           <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-            <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Nuevo post
               </h3>
               <button
@@ -140,7 +124,6 @@ function ModalCrudNewPost({ isOpen, onClose }) {
                     required
                   />
                 </div>
-
                 <div className="col-span-2 sm:col-span-1">
                   <label
                     htmlFor="category"
@@ -163,7 +146,6 @@ function ModalCrudNewPost({ isOpen, onClose }) {
                     ))}
                   </select>
                 </div>
-
                 <div className="col-span-2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -176,12 +158,10 @@ function ModalCrudNewPost({ isOpen, onClose }) {
                     id="file_input"
                     type="file"
                     onChange={(e) => {
-                      console.log("Arquivo da imagem:", e.target.files[0]);
                       setImageFile(e.target.files[0]);
                     }}
                   />
                 </div>
-
                 <div className="col-span-2">
                   <label
                     htmlFor="content"
@@ -202,16 +182,25 @@ function ModalCrudNewPost({ isOpen, onClose }) {
               </div>
               <button
                 type="submit"
-                className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-3 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 Crear
               </button>
+              {successMessage && (
+                  <div className="bg-green-200 text-green-800 p-2 mb-4 rounded">
+                    {successMessage}
+                  </div>
+                )}
+                {errorMessage && (
+                  <div className="bg-red-500 text-white p-3 mb-4">
+                    {errorMessage}
+                  </div>
+                )}
             </form>
           </div>
         </div>
-      </div>
+        </div>
     </>
   );
 }
-
 export default ModalCrudNewPost;
