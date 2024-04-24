@@ -46,8 +46,8 @@ const Petra = () => {
   };
 
   return (
-    <div className=" mx-auto our-history-container">
-      <div className="absolute z-20">
+    <div className="my-8 mx-auto our-history-container">
+      <div className="absolute z-20 mt-4">
         <button
           id="dropdownOffsetButton"
           data-dropdown-toggle="dropdownSkidding"
@@ -160,7 +160,7 @@ const Petra = () => {
       </div>
 
       <div
-        className="our-history-section bg-inherit h-screen custom-height"
+        className="our-history-section mt-4  bg-inherit h-screen custom-height overflow-y-auto"
         id="Section1"
       >
         <div className="relative">
@@ -168,14 +168,14 @@ const Petra = () => {
             <ArrowButton onClick={() => handleButtonClick("Section2")} />
           </div>
         </div>
-        <div className="h-screen my-auto flex flex-wrap justify-around w-[80%] mx-auto custom-height">
+        <div className="h-screen my-auto flex flex-wrap mt-16 justify-around w-[80%] mx-auto custom-height">
           <div className="lg:w-[60%] my-auto pt-4">
             <Title wordBlue={"Beata"} wordPink={"Petra de San José"} />
             <div className="my-8">
               <p className="text-LetterColor font-poppinsRegular text-xl md:text-lg  text-justify">
                 Ana Josefa fue un gran apóstol, orante y contemplativa. Supo
                 tocar las fibras más sensibles de los que sufrían cualquiera que
-                fuese la razón de su dolor. A continuación, revisa tu historia
+                fuese la razón de su dolor. A continuación, revisa su historia
                 hermosa e inspiradora.
               </p>
             </div>
@@ -191,7 +191,7 @@ const Petra = () => {
       </div>
 
       <div
-        className="our-history-section bg-primaryColor bg-opacity-60 h-screen custom-height pt-2 overflow-y-auto"
+        className="our-history-section mt-4 bg-primaryColor bg-opacity-60 h-screen custom-height overflow-y-auto pt-2"
         id="Section2"
       >
         <div className="relative">
@@ -205,7 +205,7 @@ const Petra = () => {
             <ArrowButton onClick={() => handleButtonClick("Section3")} />
           </div>
         </div>
-        <div className="flex flex-wrap justify-around w-[80%] mx-auto h-screen">
+        <div className="flex flex-wrap justify-around w-[80%] mx-auto h-screen my-16">
           <figure className="md:w-[40%] my-auto">
             <img
               src={casaNatal}
@@ -250,21 +250,21 @@ const Petra = () => {
       </div>
 
       <div
-        className="our-history-section bg-inherit py-10 h-screen"
+        className="our-history-section bg-inherit py-10 h-screen  custom-height overflow-y-auto"
         id="Section3"
       >
         <div className="relative">
-          <div className="absolute right-14 -top-6 lg:top-0">
+          <div className="absolute right-14 -top-4">
             <ArrowButton
               rotate={"left"}
               onClick={() => handleButtonClick("Section2")}
             />
           </div>
-          <div className="absolute right-4 -top-6 lg:top-0">
+          <div className="absolute right-4 -top-4 lg:top-0">
             <ArrowButton onClick={() => handleButtonClick("Section4")} />
           </div>
         </div>
-        <div className="flex flex-wrap h-screen justify-around w-[80%] mx-auto py-2 items-center overflow-y-auto custom-height">
+        <div className="flex flex-wrap mt-10 h-screen justify-around w-[80%] mx-auto py-2 items-center custom-height">
           <div className="lg:w-[45%] my-auto">
             <div className="mb-4">
               <Number wordBlue="1873" />
@@ -304,7 +304,7 @@ const Petra = () => {
       </div>
 
       <div
-        className="our-history-section pt-4 bg-primaryColor bg-opacity-60 h-screen custom-height"
+        className="our-history-section pt-4 bg-primaryColor bg-opacity-60 h-screen custom-height overflow-y-auto"
         id="Section4"
       >
         <div className="relative">
@@ -318,7 +318,7 @@ const Petra = () => {
             <ArrowButton onClick={() => handleButtonClick("Section5")} />
           </div>
         </div>
-        <div className="flex flex-wrap justify-around h-screen w-[80%] mx-auto overflow-y-auto custom-height">
+        <div className="flex flex-wrap mt-14 justify-around h-screen w-[80%] mx-auto">
           <div className="lg:w-[40%] my-auto">
             <img
               src={beata}
@@ -370,7 +370,7 @@ const Petra = () => {
             />
           </div>
         </div>
-        <div className="flex flex-wrap justify-around w-[80%] mx-auto h-screen overflow-y-auto custom-height">
+        <div className="flex flex-wrap mt-16 justify-around w-[80%] mx-auto h-screen custom-height">
           <div className="lg:w-[40%] my-auto">
             <img
               src={madreYellowcircle}
@@ -427,7 +427,7 @@ const Petra = () => {
             <ArrowButton onClick={() => handleButtonClick("Section7")} />
           </div>
         </div>
-        <div className="flex flex-wrap justify-around h-screen w-[80%] mx-auto">
+        <div className="flex flex-wrap mt-16 justify-around h-screen w-[80%] mx-auto">
           <div className="lg:w-[40%]">
             <img
               src={madreHondoAzul}
@@ -481,21 +481,21 @@ const Petra = () => {
       </div>
 
       <div
-        className="our-history-section bg-inherit py-10 h-screen custom-height"
+        className="our-history-section bg-inherit py-10 h-screen custom-height overflow-y-auto"
         id="Section7"
       >
         <div className="relative">
-          <div className="absolute right-14 -top-6 lg:top-0">
+          <div className="absolute right-14 -top-4 lg:top-0">
             <ArrowButton
               rotate={"left"}
               onClick={() => handleButtonClick("Section6")}
             />
           </div>
-          <div className="absolute right-4 -top-6 lg:top-0">
+          <div className="absolute right-4 -top-4 lg:top-0">
             <ArrowButton onClick={() => handleButtonClick("Section8")} />
           </div>
         </div>
-        <div className="flex flex-wrap h-screen justify-around w-[80%] mx-auto py-2 items-center overflow-y-auto custom-height">
+        <div className="flex flex-wrap mt-16  h-screen justify-around w-[80%] mx-auto py-2 items-center custom-height">
           <div className="lg:w-[45%] my-auto">
             <div className="mb-4">
               <Number wordBlue="1906" />
@@ -531,7 +531,7 @@ const Petra = () => {
       </div>
 
       <div
-        className="our-history-section pt-4 bg-primaryColor bg-opacity-60 h-screen custom-height"
+        className="our-history-section pt-4 bg-primaryColor bg-opacity-60 h-screen overflow-y-auto custom-height"
         id="Section8"
         style={{ overflowY: "auto" }}
       >
@@ -546,7 +546,7 @@ const Petra = () => {
             <ArrowButton onClick={() => handleButtonClick("Section1")} />
           </div>
         </div>
-        <div className="flex flex-wrap justify-around h-screen w-[80%] mx-auto">
+        <div className="flex flex-wrap mt-16 justify-around h-screen w-[80%] mx-auto">
           <div className="lg:w-[40%] my-auto">
             <img
               src={photo1994}

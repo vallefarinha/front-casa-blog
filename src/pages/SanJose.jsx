@@ -43,7 +43,7 @@ const SanJose = () => {
 
   return (
     <div className=" mx-auto our-history-container">
-      <div className="absolute z-20">
+      <div className="absolute z-20 mt-4">
         <button
           id="dropdownOffsetButton"
           data-dropdown-toggle="dropdownSkidding"
@@ -70,7 +70,7 @@ const SanJose = () => {
                 }}
                 className="font-poppinsRegular text-base block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
               >
-              La história
+              La historia
               </div>
             </li>
             <li>
@@ -93,7 +93,7 @@ const SanJose = () => {
                 href="#Section3"
                 className="font-poppinsRegular text-base block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
               >
-                El Santuário
+                El Santuario
               </div>
             </li>
             <li>
@@ -123,7 +123,7 @@ const SanJose = () => {
       </div>
 
       <div
-        className="our-history-section bg-inherit h-screen py-12 sm:py-10 md:py-0 custom-height  overflow-y-auto"
+        className="our-history-section bg-inherit h-screen py-12 sm:py-10 md:py-0 custom-height mt-4  overflow-y-auto"
         id="Section1"
       >
         <div className="relative">
@@ -131,9 +131,9 @@ const SanJose = () => {
             <ArrowButton onClick={() => handleButtonClick("Section2")} />
           </div>
         </div>
-        <div className="h-screen  flex flex-wrap justify-around w-[80%] mx-auto custom-height">
+        <div className="h-screen  flex flex-wrap mt-10 justify-around w-[80%] mx-auto custom-height">
           <div className="lg:w-[60%] my-auto pt-4">
-            <Title wordBlue={"La história de"} wordPink={"San José"} />
+            <Title wordBlue={"La historia de"} wordPink={"San José"} />
             <div className="my-8">
               <p className="text-LetterColor font-poppinsRegular text-xl md:text-lg  text-justify">
                 San José es una figura central en la tradición cristiana,
@@ -172,21 +172,21 @@ const SanJose = () => {
         id="Section2"
       >
         <div className="relative">
-          <div className="absolute right-14 top-3">
+          <div className="absolute right-14 top-4">
             <ArrowButton
               rotate={"left"}
               onClick={() => handleButtonClick("Section1")}
             />
           </div>
-          <div className="absolute right-4 top-3">
+          <div className="absolute right-4 top-4">
             <ArrowButton onClick={() => handleButtonClick("Section3")} />
           </div>
         </div>
-        <div className="flex flex-wrap justify-around w-[80%] mx-auto h-screen custom-height">
+        <div className="flex flex-wrap justify-around mt-20 w-[80%] mx-auto h-screen custom-height">
           <div className="md:w-[40%] my-auto">
             <img
               src={sanjose}
-              alt="Imagen de la casa en 1963"
+              alt="Imagen de san jose"
               className="lg:w-[80%] md:mx-auto h-auto"
             />
           </div>
@@ -209,17 +209,17 @@ const SanJose = () => {
         id="Section3"
       >
         <div className="relative">
-          <div className="absolute right-14 -top-6 lg:top-0">
+          <div className="absolute right-14 -top-4 lg:top-0">
             <ArrowButton
               rotate={"left"}
               onClick={() => handleButtonClick("Section2")}
             />
           </div>
-          <div className="absolute right-4 -top-6 lg:top-0">
+          <div className="absolute right-4 -top-4 lg:top-0">
             <ArrowButton onClick={() => handleButtonClick("Section4")} />
           </div>
         </div>
-        <div className="flex flex-wrap h-screen justify-around w-[80%] mx-auto py-2 items-center custom-height">
+        <div className="flex flex-wrap mt-10 h-screen justify-around w-[80%] mx-auto py-2 items-center custom-height">
           <div className="lg:w-[45%] my-auto">
             <div className="mb-4">
             <Number wordBlue="El Santuário" />
@@ -255,7 +255,7 @@ const SanJose = () => {
             <ArrowButton onClick={() => handleButtonClick("Section5")} />
           </div>
         </div>
-        <div className="flex flex-wrap justify-around h-screen w-[80%] mx-auto">
+        <div className="flex flex-wrap mt-16 justify-around h-screen w-[80%] mx-auto">
           <div className="lg:w-[40%] my-auto">
             <img
               src={cinta}
@@ -296,7 +296,7 @@ El Cordón de San José es una tradición que consiste en colocar una cinta alre
            onClick={() => handleButtonClick("Section1")} />
           </div>
         </div>
-        <div className="flex flex-wrap justify-around w-[80%] mx-auto h-screen">
+        <div className="flex flex-wrap mt-16 justify-around w-[80%] mx-auto h-screen">
           <div className="lg:w-[40%] my-auto">
             <img
               src={burnletters}
