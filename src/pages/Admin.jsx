@@ -3,10 +3,12 @@ import TitleHistory from "../components/title/TitleHistory";
 import { FiLogOut } from "react-icons/fi";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import { IoDocumentText } from "react-icons/io5";
+import { BiSolidCategory } from "react-icons/bi";
 import TableAdmin from "../components/tables/TableAdmin";
 import TableComment from "../components/tables/TableComment";
 import { useNavigate } from "react-router-dom";
 import ApiBackend from "../services/ApiBackend.jsx";
+import TableCategories from "../components/tables/TableCategories.jsx";
 
 function Admin() {
   const [selectedItem, setSelectedItem] = useState("posts");
@@ -26,15 +28,15 @@ function Admin() {
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
         setShowLogoutMessage(true);
         await ApiBackend.logout(token); 
-        localStorage.removeItem('token'); 
+        localStorage.removeItem("token"); 
         setTimeout(() => {
           setShowLogoutMessage(false);
           navigate('/');
-        }, 3000);
+        }, 2000);
       }
     } catch (error) {
       console.error('Error durante el logout:', error);
@@ -68,6 +70,15 @@ function Admin() {
               <span className="ml-2">Comentarios</span>
             </button>
             <button
+              className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${
+                selectedItem === "categories" ? "bg-gray-200" : ""
+              }`}
+              onClick={() => handleItemClick("categories")}
+            >
+              <BiSolidCategory  className="text-2xl text-primaryColor" />
+              <span className="ml-2">Categorias</span>
+            </button>
+            <button
               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               onClick={handleLogout}
             >
@@ -80,6 +91,7 @@ function Admin() {
         <div className="w-full flex justify-center">
           {selectedItem === "posts" && <TableAdmin />}
           {selectedItem === "comments" && <TableComment />}
+          {selectedItem === "categories" && <TableCategories />}
         </div>
       </div>
       {showLogoutMessage && (

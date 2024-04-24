@@ -17,22 +17,21 @@ function TableComment() {
   const [selectedCommentIndex, setSelectedCommentIndex] = useState(null);
 
 
+  const fetchData = async () => {
+    try {
+      const commentsData = await ApiBackend.getAllComments();
+      setComments(commentsData.comments);
+
+      const postsData = await ApiBackend.getAllPosts();
+      setPosts(postsData.posts);
+    } catch (error) {
+      console.error("Error al obtener datos:", error);
+     
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const commentsData = await ApiBackend.getAllComments();
-        setComments(commentsData.comments);
-
-        const postsData = await ApiBackend.getAllPosts();
-        setPosts(postsData.posts);
-
-      } catch (error) {
-        setErrorMessage(
-          "Error al obtener datos. Por favor, inténtalo de nuevo más tarde."
-        );
-      }
-    };
-
+    
     fetchData();
   }, []);
 
@@ -88,8 +87,8 @@ function TableComment() {
 
   const handleDelete = async (id) => {
     const confirmDelete = await Swal.fire({
-      title: "Quieres eliminar el post?",
-      text: "No puedes volver esta acción!",
+      title: "Quieres eliminar el comentario?",
+      text: "No puedes volver a esta acción!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -100,12 +99,14 @@ function TableComment() {
     if (confirmDelete.isConfirmed) {
       try {  
         await ApiBackend.deleteComment(id);
+        fetchData();
 
         Swal.fire({
           title: "Eliminar",
           text: "El post fue eliminado",
           icon: "success"
         });
+
   
         console.log(`Post con ID ${id} eliminado con éxito`);
       } catch (error) {
@@ -209,7 +210,7 @@ function TableComment() {
                         <td className="px-4 py-3">
                           <button
                             href="#"
-                            className="block bg-primaryColor px-4 py-2 text-sm text-LetterColor rounded-xl font-poppinsBold hover:bg-secondaryColor"
+                            className="block bg-primaryColor px-4 py-2 text-sm text-LetterColor rounded-xl font-poppinsBold hover:bg-tertiaryColor"
                             onClick={() => handleDelete(comment.id)}
                           >
                             Eliminar
