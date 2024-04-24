@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unknown-property */
 import React, { useState } from "react";
-import { Link } from "react-router-dom"; // Certifique-se de importar o Link corretamente
+import { Link } from "react-router-dom"; 
 import ModalCrud from "../modal/ModalCrudNewPost";
 import ModalCrudEdit from "../modal/ModalCrudEdit";
 
@@ -10,7 +10,7 @@ function TableAdmin() {
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [isEditDeleteDropdownOpen, setIsEditDeleteDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Novo estado para o modal de edição
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
 
   const openModal = () => {
