@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import ModalCrud from "../modal/ModalCrudNewPost";
 import ModalCrudEdit from "../modal/ModalCrudEdit";
 import ApiBackend from "../../services/ApiBackend.jsx";
-import Swal from 'sweetalert2';
-
+import Swal from "sweetalert2";
 
 function TableAdmin() {
   const [posts, setPosts] = useState([]);
@@ -25,26 +23,24 @@ function TableAdmin() {
 
   useEffect(() => {
     fetchData();
-  }, []); 
+  }, []);
 
- 
-    const fetchData = async () => {
-      try {
-        const postsData = await ApiBackend.getAllPost();
-        setPosts(postsData.posts);
-        const categoriesData = await ApiBackend.getAllCategories();
-        setCategories(categoriesData.categories);
-      } catch (error) {
-        setErrorMessage(
-          "Error al obtener datos. Por favor, inténtalo de nuevo más tarde."
-        );
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const postsData = await ApiBackend.getAllPost();
+      setPosts(postsData.posts);
+      const categoriesData = await ApiBackend.getAllCategories();
+      setCategories(categoriesData.categories);
+    } catch (error) {
+      setErrorMessage(
+        "Error al obtener datos. Por favor, inténtalo de nuevo más tarde."
+      );
+    }
+  };
 
-    const handleModalSubmit = async () => {
-      await fetchData(); 
-    };
-  
+  const handleModalSubmit = async () => {
+    await fetchData();
+  };
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -89,7 +85,7 @@ function TableAdmin() {
       (post) => post.category_id.toString() === selectedCategory
     );
   }
-  
+
   if (searchText !== "") {
     filteredPosts = filteredPosts.filter((post) =>
       Object.values(post).some(
@@ -122,26 +118,27 @@ function TableAdmin() {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Eliminar"
+      confirmButtonText: "Eliminar",
     });
-  
+
     if (confirmDelete.isConfirmed) {
-      try {  
-        await ApiBackend.deletePost(id)  
+      try {
+        await ApiBackend.deletePost(id);
+        fetchData();
 
         Swal.fire({
           title: "Eliminar",
           text: "El post fue eliminado",
-          icon: "success"
+          icon: "success",
         });
-  
+
         console.log(`Post con ID ${id} eliminado con éxito`);
       } catch (error) {
         console.error(`Error al eliminar el post con ID ${id}:`, error);
         Swal.fire({
           title: "Error!",
           text: `Error al eliminar el post con ID ${id}`,
-          icon: "error"
+          icon: "error",
         });
       }
     }
@@ -193,7 +190,11 @@ function TableAdmin() {
                 >
                   +Añadir Post
                 </button>
-                <ModalCrud isOpen={isModalOpen} onClose={closeModal} onSubmit={handleModalSubmit}/>
+                <ModalCrud
+                  isOpen={isModalOpen}
+                  onClose={closeModal}
+                  onSubmit={handleModalSubmit}
+                />
                 <div className="flex flex-col items-center space-x-3 w-full md:w-auto">
                   <button
                     id="filterDropdownButton"
@@ -302,44 +303,20 @@ function TableAdmin() {
                           )}
                         </td>
                         <td className="px-4 py-3">
-                          <div className="relative inline-block text-left">
-                            <button
-                              id={`editDeleteDropdownButton-${post.id}`}
-                              onClick={() => toggleEditDeleteDropdown(post.id)}
-                              aria-expanded={
-                                selectedPostIndex === post.id ? "true" : "false"
-                              }
-                              className="ml-3 md:ml-0 flex items-center justify-center text-gray-900 focus:outline-none bg-white rounded-lg focus:z-10 focus:ring-4 focus:ring-gray-200"
-                              type="button"
-                            >
-                              ...
-                            </button>
-                            <div
-                              id={`editDeleteDropdown-${post.id}`}
-                              className={`${
-                                selectedPostIndex === post.id
-                                  ? "block"
-                                  : "hidden"
-                              } absolute left-0 top-6 w-24 p-3 bg-white rounded-lg shadow`}
-                            >
-                              <div className="py-1">
-                                <button
-                                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                                  onClick={() => openEditModal(post.id)}
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  href="#"
-                                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                                  onClick={() => handleDelete(post.id)}
-                                >
-                                  Delete
-                                </button>
-
-                              </div>
-                            </div>
-                          </div>
+                          <button
+                            className="block bg-secondaryColor px-4 py-2 mb-1 text-sm text-LetterColor rounded-xl font-poppinsBold hover:bg-tertiaryColor"
+                            onClick={() => openEditModal(post.id)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            href="#"
+                            className="block bg-primaryColor px-4 py-2 text-sm text-LetterColor rounded-xl font-poppinsBold hover:bg-tertiaryColor"
+                            onClick={() => handleDelete(post.id)}
+                          >
+                            Delete
+                          </button>
+                          
                         </td>
                       </tr>
                     );
