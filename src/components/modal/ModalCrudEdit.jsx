@@ -9,6 +9,8 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
   const [showAlert, setShowAlert] = useState(false);
   const [showEditAlert, setShowEditAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [postData, setPostData] = useState({
     id: "",
     title: "",
@@ -42,18 +44,42 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
   };
 
   const handleImageChange = (e) => {
-    setPostData({ ...postData, image: e.target.files[0] });
+    const selectedImage = e.target.files[0];
+    console.log(selectedImage);
+    if (selectedImage) {
+      setPostData({ ...postData, image: selectedImage });
+    }
   };
+
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-
+    console.log("Datos del post a enviar:", postData);
     try {
-      const response = await ApiBackend.updatePost(selectedPostIndex, postData);
-      console.log("Post atualizado con exito:", response);
-      setShowEditAlert(true);
+      const postDataWithoutImage = { ...postData };
+      if (!postData.image) {
+        delete postDataWithoutImage.image;
+      }
+      const formData = new FormData();
+      formData.append("title", postData.title);
+      formData.append("content", postData.content);
+      formData.append("category_id", postData.category_id);
+      formData.append("author", postData.author);
+      formData.append("image", postData.image);
+
+      await ApiBackend.updatePost(selectedPostIndex, formData);
+      console.log("actualizado correctamente");
+      setSuccessMessage(
+        "Post actualizado exitosamente, la página se recargará"
+      );
+      setTimeout(() => {
+        window.location.reload();
+      }, 5000);
     } catch (error) {
       console.error("Error al atualizar el post:", error);
-      setShowEditAlert(true);
+      setErrorMessage("Error al actualizar el post");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 10000);
     }
   };
 
@@ -71,7 +97,7 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
           <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Nuevo post
+                Actualizar el Post
               </h3>
               <button
                 type="button"
@@ -84,7 +110,11 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
             </div>
             {showAlert && <SimpleAlert icon="error" text={alertMessage} />}
             {postData ? (
-              <form className="p-4 md:p-5" onSubmit={handleEditSubmit}>
+              <form
+                className="p-4 md:p-5"
+                onSubmit={handleEditSubmit}
+                encType="multipart/form-data"
+              >
                 <div className="grid gap-4 mb-4 grid-cols-2">
                   <div className="col-span-2">
                     <label
@@ -117,7 +147,7 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
                       onChange={handleImageChange}
                     />
                   </div>
-                  <div className="col-span-2 sm:col-span-1">
+                  <div className="col-span-2 md:col-span-1">
                     <label
                       htmlFor="category_id"
                       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -139,7 +169,7 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
                       ))}
                     </select>
                   </div>
-                  <div className="col-span-2">
+                  <div className="col-span-2 md:col-span-1">
                     <label
                       htmlFor="author"
                       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -180,6 +210,16 @@ function ModalCrudEdit({ isOpen, onClose, selectedPostIndex }) {
                 >
                   Editar post
                 </button>
+                {successMessage && (
+                  <div className="bg-green-200 text-green-800 p-2 mb-4 rounded">
+                    {successMessage}
+                  </div>
+                )}
+                {errorMessage && (
+                  <div className="bg-red-500 text-white p-3 mb-4">
+                    {errorMessage}
+                  </div>
+                )}
               </form>
             ) : (
               <p className="font-poppinsMedium text-LetterColor text-center">

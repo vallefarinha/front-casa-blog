@@ -255,7 +255,7 @@ const openEditModal = (postId) => {
                         <td className="px-4 py-3">
                           {post.image && (
                             <img
-                              src={post.image}
+                              src={"http://localhost:8000/images/" +post.image}
                               alt={post.title}
                               className="w-24 h-24"
                             />
