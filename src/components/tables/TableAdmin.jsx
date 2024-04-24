@@ -15,18 +15,15 @@ function TableAdmin() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(6);
   const [selectedPostIndex, setSelectedPostIndex] = useState(null);
-  const [selectedPostId, setSelectedPostId] = useState(null);
-
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
-  const [isEditDeleteDropdownOpen, setIsEditDeleteDropdownOpen] =
-    useState(false);
+  const [isEditDeleteDropdownOpen, setIsEditDeleteDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const postsData = await ApiBackend.getAllPost(selectedCategory); // Passar as categorias selecionadas para filtrar os posts
+        const postsData = await ApiBackend.getAllPost(selectedCategory);
         setPosts(postsData.posts);
         const categoriesData = await ApiBackend.getAllCategories();
         setCategories(categoriesData.categories);
@@ -48,21 +45,27 @@ function TableAdmin() {
     setIsModalOpen(false);
   };
 
-const openEditModal = (postId) => {
-  setSelectedPostId(postId);
-  setIsEditModalOpen(true);
-};
+  const openEditModal = (postId) => {
+    setIsEditModalOpen(true);
+    setSelectedPostIndex(postId);
+    console.log(postId)
+  };
+
+
   const closeEditModal = () => {
     setIsEditModalOpen(false);
   };
 
+  const toggleEditDeleteDropdown = (postId) => {
+    setSelectedPostIndex((prevId) =>
+        prevId === postId ? null : postId
+    );
+};
   const toggleFilterDropdown = () => {
     setIsFilterDropdownOpen(!isFilterDropdownOpen);
   };
 
-  const toggleEditDeleteDropdown = (index) => {
-    setSelectedPostIndex(index === selectedPostIndex ? null : index);
-  };
+
 
   const handleCategoryChange = (e, categoryId) => {
     const { checked } = e.target;
@@ -107,6 +110,7 @@ const openEditModal = (postId) => {
   const endIndex = Math.min(startIndex + itemsPerPage, filteredPosts.length);
 
   const currentPosts = filteredPosts.slice(startIndex, endIndex);
+  const postId = filteredPosts[selectedPostIndex]?.id;
 
   return (
     <div className="w-[75%] ml-[5%]">
@@ -261,10 +265,10 @@ const openEditModal = (postId) => {
                         <td className="px-4 py-3">
                           <div className="relative inline-block text-left">
                             <button
-                              id={`editDeleteDropdownButton-${index}`}
-                              onClick={() => toggleEditDeleteDropdown(index)}
+                              id={`editDeleteDropdownButton-${post.id}`}
+                              onClick={() => toggleEditDeleteDropdown(post.id)}
                               aria-expanded={
-                                selectedPostIndex === index ? "true" : "false"
+                                selectedPostIndex === post.id ? "true" : "false"
                               }
                               className="ml-3 md:ml-0 flex items-center justify-center text-gray-900 focus:outline-none bg-white rounded-lg focus:z-10 focus:ring-4 focus:ring-gray-200"
                               type="button"
@@ -272,16 +276,18 @@ const openEditModal = (postId) => {
                               ...
                             </button>
                             <div
-                              id={`editDeleteDropdown-${index}`}
+                              id={`editDeleteDropdown-${post.id}`}
                               className={`${
-                                selectedPostIndex === index ? "block" : "hidden"
+                                selectedPostIndex === post.id
+                                  ? "block"
+                                  : "hidden"
                               } absolute left-0 top-6 w-24 p-3 bg-white rounded-lg shadow`}
                             >
                               <div className="py-1">
                                 <button
                                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                                  onClick={openEditModal}
-                                >
+                                  onClick={() => openEditModal(post.id)}
+                                  >
                                   Edit
                                 </button>
                                 <a
@@ -353,7 +359,6 @@ const openEditModal = (postId) => {
                     </svg>
                   </a>
                 </li>
-                {/* Aqui vão os links de página */}
                 {Array.from(
                   { length: Math.ceil(filteredPosts.length / itemsPerPage) },
                   (_, i) => (
@@ -374,7 +379,13 @@ const openEditModal = (postId) => {
             </nav>
           </div>
         </div>
-        <ModalCrudEdit isOpen={isEditModalOpen} onClose={closeEditModal} />
+        <ModalCrudEdit
+          isOpen={isEditModalOpen}
+          onClose={closeEditModal}
+          postId={postId}
+          selectedPostIndex={selectedPostIndex}
+          filteredPosts={filteredPosts}
+        />
       </section>
     </div>
   );
