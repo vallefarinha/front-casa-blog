@@ -40,7 +40,7 @@ function Admin() {
     <>
       <div className="flex">
         <aside
-          className="left-0 z-40 w-[25%] h-screen transition-transform -translate-x-full bg-bgColor sm:translate-x-0 font-poppinsMedium text-LetterColor"
+          className="left-0 z-40 w-[25%] h-screen justify-center transition-transform -translate-x-full bg-bgColor sm:translate-x-0 font-poppinsMedium text-LetterColor"
           aria-label="Sidebar"
         >
           <div className="h-full w-full px-3 ml-8 pb-4 overflow-y-auto bg-bgColor">

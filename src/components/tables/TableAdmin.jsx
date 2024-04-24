@@ -113,7 +113,7 @@ function TableAdmin() {
   const postId = filteredPosts[selectedPostIndex]?.id;
 
   return (
-    <div className="w-[75%] ml-[5%]">
+    <div className="w-[85%] ml-[5%]">
       <section className="bg-gray-50 dark:bg-gray-900">
         <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
           <div className="bg-white relative shadow-md sm:rounded-lg">
@@ -180,7 +180,7 @@ function TableAdmin() {
                       Elija una categoria
                     </h6>
                     <ul
-                      className="space-y-2 text-sm"
+                      className="space-y-2 text-sm p-4"
                       aria-labelledby="filterDropdownButton"
                     >
                       {categories.map((category) => (
@@ -213,9 +213,9 @@ function TableAdmin() {
                 </div>
               </div>
             </div>
-            <div className="">
-              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <div className="overflow-y-auto">
+            <table className="w-[80%] text-sm text-left text-gray-500 p-6 m-6">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                   <tr>
                     <th scope="col" className="px-4 py-3">
                       Título
@@ -258,7 +258,7 @@ function TableAdmin() {
                             <img
                               src={post.image}
                               alt={post.title}
-                              className="w-24 h-24"
+                              className="w-48 h-48"
                             />
                           )}
                         </td>
@@ -307,7 +307,7 @@ function TableAdmin() {
               </table>
             </div>
 
-            <nav className="flex justify-between items-center mt-4">
+            <nav className="flex justify-between items-center mt-4 p-4">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 0}
@@ -375,6 +375,27 @@ function TableAdmin() {
                     </li>
                   )
                 )}
+             <li>
+                  <a
+                    href="#"
+                    className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  >
+                    <span className="sr-only">Next</span>
+                    <svg
+                      className="w-5 h-5"
+                      aria-hidden="true"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </a>
+                </li>
               </ul>
             </nav>
           </div>
