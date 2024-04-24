@@ -30,9 +30,8 @@ function TableComment() {
         const postsData = await ApiBackend.getAllPosts();
         setPosts(postsData.posts);
 
-
         const postData = await getPostById(post.id);
-            setPostData(postData.post)
+        setPostData(postData.post);
       } catch (error) {
         setErrorMessage(
           "Error al obtener datos. Por favor, inténtalo de nuevo más tarde."
@@ -173,36 +172,43 @@ function TableComment() {
                   </tr>
                 </thead>
                 <tbody>
-                {currentComments.map((comment) => {
-  // Encontre o post correspondente ao post_id do comentário
-  const post = posts.find((post) => post.id === comment.post_id);
-  console.log(post)
-  // Verifique se o post foi encontrado antes de acessar seu título
-  const postTitle = post ? post.title : 'Título não encontrado';
+                  {currentComments.map((comment) => {
+                    // Encontre o post correspondente ao post_id do comentário
+                    const post = posts.find(
+                      (post) => post.id === comment.post_id
+                    );
+                    console.log(post);
+                    // Verifique se o post foi encontrado antes de acessar seu título
+                    const postTitle = post
+                      ? post.title
+                      : "Título não encontrado";
 
-  return (
-    <tr key={comment.id} className="border-b dark:border-gray-700">
-      <td className="px-4 py-3">
-        {comment.content.length > 50
-          ? `${comment.content.substring(0, 50)}...`
-          : comment.content}
-      </td>
-      <td className="px-4 py-3">{comment.author}</td>
-      <td className="px-4 py-3">{comment.email}</td>
-      {/* Exiba o título do post em vez do ID */}
-      <td className="px-4 py-3">{comment.post_id}</td>
-      <td className="px-4 py-3">
-        <button
-          href="#"
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-          onClick={() => handleDelete(comment.id)}
-        >
-          Delete
-        </button>
-      </td>
-    </tr>
-  );
-})}
+                    return (
+                      <tr
+                        key={comment.id}
+                        className="border-b dark:border-gray-700"
+                      >
+                        <td className="px-4 py-3">
+                          {comment.content.length > 50
+                            ? `${comment.content.substring(0, 50)}...`
+                            : comment.content}
+                        </td>
+                        <td className="px-4 py-3">{comment.author}</td>
+                        <td className="px-4 py-3">{comment.email}</td>
+                        {/* Exiba o título do post em vez do ID */}
+                        <td className="px-4 py-3">{comment.post_id}</td>
+                        <td className="px-4 py-3">
+                          <button
+                            href="#"
+                            className="block bg-primaryColor px-4 py-2 text-sm text-LetterColor rounded-xl font-poppinsBold hover:bg-secondaryColor"
+                            onClick={() => handleDelete(comment.id)}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
