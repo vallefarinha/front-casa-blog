@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TitleHistory from "../components/title/TitleHistory";
 import { FiLogOut } from "react-icons/fi";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
@@ -13,6 +12,13 @@ function Admin() {
   const [selectedItem, setSelectedItem] = useState("posts");
   const [showLogoutMessage, setShowLogoutMessage] = useState(false);
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Verifica se há um token de autenticação ativo
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token); // Define o estado de login com base na presença do token
+  }, []);
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
@@ -34,6 +40,7 @@ function Admin() {
       console.error('Error durante el logout:', error);
     }
   };
+
   return (
     <>
       <div className="">
@@ -59,9 +66,6 @@ function Admin() {
             >
               <HiOutlineInboxArrowDown className="text-2xl text-primaryColor" />
               <span className="ml-2">Comentarios</span>
-              <span className="inline-flex items-center justify-center w-3 h-3 p-3 ml-2 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">
-                3
-              </span>
             </button>
             <button
               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"

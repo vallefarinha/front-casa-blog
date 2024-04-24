@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import ModalCrud from "../modal/ModalCrudNewPost";
 import ModalCrudEdit from "../modal/ModalCrudEdit";
 import ApiBackend from "../../services/ApiBackend.jsx";
+import Swal from 'sweetalert2';
+
 
 function TableAdmin() {
   const [posts, setPosts] = useState([]);
@@ -20,6 +21,7 @@ function TableAdmin() {
     useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [confirm, setConfirm] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -106,6 +108,39 @@ function TableAdmin() {
 
   const currentPosts = filteredPosts.slice(startIndex, endIndex);
   const postId = filteredPosts[selectedPostIndex]?.id;
+
+  const handleDelete = async (id) => {
+    const confirmDelete = await Swal.fire({
+      title: "Quieres eliminar el post?",
+      text: "No puedes volver esta acción!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Eliminar"
+    });
+  
+    if (confirmDelete.isConfirmed) {
+      try {  
+        await ApiBackend.deletePost(id)  
+
+        Swal.fire({
+          title: "Eliminar",
+          text: "El post fue eliminado",
+          icon: "success"
+        });
+  
+        console.log(`Post con ID ${id} eliminado con éxito`);
+      } catch (error) {
+        console.error(`Error al eliminar el post con ID ${id}:`, error);
+        Swal.fire({
+          title: "Error!",
+          text: `Error al eliminar el post con ID ${id}`,
+          icon: "error"
+        });
+      }
+    }
+  };
 
   return (
     <div className="w-[95%]">
@@ -257,7 +292,7 @@ function TableAdmin() {
                             <img
                               src={"http://localhost:8000/images/" + post.image}
                               alt={post.title}
-                              className="w-48 h-48"
+                              className="w-24 h-24"
                             />
                           )}
                         </td>
@@ -289,12 +324,14 @@ function TableAdmin() {
                                 >
                                   Edit
                                 </button>
-                                <a
+                                <button
                                   href="#"
                                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                                  onClick={() => handleDelete(post.id)}
                                 >
                                   Delete
-                                </a>
+                                </button>
+
                               </div>
                             </div>
                           </div>
