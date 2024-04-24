@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TitleHistory from "../components/title/TitleHistory";
 import { FiLogOut } from "react-icons/fi";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
@@ -13,6 +12,13 @@ function Admin() {
   const [selectedItem, setSelectedItem] = useState("posts");
   const [showLogoutMessage, setShowLogoutMessage] = useState(false);
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Verifica se há um token de autenticação ativo
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token); // Define o estado de login com base na presença do token
+  }, []);
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
@@ -34,6 +40,11 @@ function Admin() {
       console.error("Erro durante o logout:", error);
     }
   };
+
+  if (!isLoggedIn) {
+    navigate("/login");
+    return null;
+  }
 
   return (
     <>

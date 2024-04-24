@@ -5,21 +5,17 @@ import { Link } from "react-router-dom";
 import ModalCrud from "../modal/ModalCrudNewPost";
 import ModalCrudEdit from "../modal/ModalCrudEdit";
 import ApiBackend from "../../services/ApiBackend.jsx";
+import Swal from 'sweetalert2';
 
 function TableComment() {
   const [posts, setPosts] = useState([]);
-  const [postData, setPost] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [comments, setComments] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
-  const [errorMessage, setErrorMessage] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(6);
   const [selectedCommentIndex, setSelectedCommentIndex] = useState(null);
-  // const [selectedPostId, setSelectedPostId] = useState(null);
-  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
-  // const [confirm, setConfirm] = useState(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,8 +26,6 @@ function TableComment() {
         const postsData = await ApiBackend.getAllPosts();
         setPosts(postsData.posts);
 
-        const postData = await getPostById(post.id);
-        setPostData(postData.post);
       } catch (error) {
         setErrorMessage(
           "Error al obtener datos. Por favor, inténtalo de nuevo más tarde."
@@ -90,26 +84,41 @@ function TableComment() {
   // const currentPosts = filteredPosts.slice(startIndex, endIndex);
   // const postId = filteredPosts[selectedPostIndex]?.id;
 
-  const handleDelete = async (id) => {
-    // Mostrar alerta de confirmación
-    const confirmDelete = window.confirm(
-      "¿Estás seguro de que quieres eliminar este post?"
-    );
 
-    if (confirmDelete) {
-      try {
+
+  const handleDelete = async (id) => {
+    const confirmDelete = await Swal.fire({
+      title: "Quieres eliminar el post?",
+      text: "No puedes volver esta acción!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Eliminar"
+    });
+  
+    if (confirmDelete.isConfirmed) {
+      try {  
         await ApiBackend.deleteComment(id);
 
-        setComments((prevComments) =>
-          prevComments.filter((comment) => comment.id !== id)
-        );
-
+        Swal.fire({
+          title: "Eliminar",
+          text: "El post fue eliminado",
+          icon: "success"
+        });
+  
         console.log(`Post con ID ${id} eliminado con éxito`);
       } catch (error) {
         console.error(`Error al eliminar el post con ID ${id}:`, error);
+        Swal.fire({
+          title: "Error!",
+          text: `Error al eliminar el post con ID ${id}`,
+          icon: "error"
+        });
       }
     }
   };
+
   return (
     <div className="w-[95%]">
       <section className="bg-gray-50 dark:bg-gray-900">
