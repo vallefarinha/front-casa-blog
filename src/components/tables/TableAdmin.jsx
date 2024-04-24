@@ -188,7 +188,7 @@ const openEditModal = (postId) => {
                     data-dropdown-toggle="filterDropdown"
                     className="md:w-auto flex items-center justify-left py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                   >
-                    Filter
+                    Filtrar por categoria
                   </button>
 
                   <div
@@ -283,7 +283,7 @@ const openEditModal = (postId) => {
                             <img
                               src={"http://localhost:8000/images/" +post.image}
                               alt={post.title}
-                              className="w-48 h-48"
+                              className="w-24 h-24"
                             />
                           )}
                         </td>
@@ -411,13 +411,13 @@ const openEditModal = (postId) => {
                       className="w-5 h-5"
                       aria-hidden="true"
                       fill="currentColor"
-                      viewBox="0 0 20 20"
+                      viewbox="0 0 20 20"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        fillRule="evenodd"
-                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                        clipRule="evenodd"
+                        fill-rule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clip-rule="evenodd"
                       />
                     </svg>
                   </a>
