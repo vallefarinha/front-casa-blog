@@ -134,7 +134,7 @@ const openEditModal = (postId) => {
   };
 
   return (
-    <div className="w-[85%] ml-[5%]">
+    <div className="w-[95%]">
       <section className="bg-gray-50 dark:bg-gray-900">
         <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
           <div className="bg-white relative shadow-md sm:rounded-lg">
@@ -235,7 +235,7 @@ const openEditModal = (postId) => {
               </div>
             </div>
             <div className="overflow-y-auto">
-            <table className="w-[80%] text-sm text-left text-gray-500 p-6 m-6">
+            <table className="w-full md:w-[97%] mx-auto text-sm text-left text-gray-500 p-6 m-6">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                   <tr>
                     <th scope="col" className="px-4 py-3">
@@ -248,6 +248,9 @@ const openEditModal = (postId) => {
                       Categoría
                     </th>
                     <th scope="col" className="px-4 py-3">
+                      Autor
+                    </th>
+                    <th scope="col" className="px-4 py-3">
                       Imagen
                     </th>
                     <th scope="col" className="px-4 py-3">
@@ -256,7 +259,7 @@ const openEditModal = (postId) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {currentPosts.map((post, index) => {
+                  {currentPosts.map((post) => {
                     return (
                       <tr
                         key={post.id}
@@ -274,10 +277,11 @@ const openEditModal = (postId) => {
                             : post.content}
                         </td>{" "}
                         <td className="px-4 py-3">{post.category_id}</td>
+                        <td className="px-4 py-3">{post.author}</td>
                         <td className="px-4 py-3">
                           {post.image && (
                             <img
-                              src={post.image}
+                              src={"http://localhost:8000/images/" +post.image}
                               alt={post.title}
                               className="w-48 h-48"
                             />
@@ -329,7 +333,7 @@ const openEditModal = (postId) => {
               </table>
             </div>
 
-            <nav className="flex justify-between items-center mt-4 p-4">
+            <nav className="flex justify-between items-center mt-3 p-4">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 0}
