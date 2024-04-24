@@ -7,7 +7,6 @@ import ModalCrudEdit from "../modal/ModalCrudEdit";
 import ApiBackend from "../../services/ApiBackend.jsx";
 import AreYouSure from "../alerts/AreYouSure.jsx";
 
-
 function TableAdmin() {
   const [posts, setPosts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -19,7 +18,8 @@ function TableAdmin() {
   const [selectedPostIndex, setSelectedPostIndex] = useState(null);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
-  const [isEditDeleteDropdownOpen, setIsEditDeleteDropdownOpen] = useState(false);
+  const [isEditDeleteDropdownOpen, setIsEditDeleteDropdownOpen] =
+    useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [confirm, setConfirm] = useState(null);
@@ -49,25 +49,21 @@ function TableAdmin() {
     setIsModalOpen(false);
   };
 
-const openEditModal = (postId) => {
-  console.log(postId);
-  setSelectedPostId(postId);
-  setIsEditModalOpen(true);
-};
+  const openEditModal = (postId) => {
+    console.log(postId);
+    setSelectedPostId(postId);
+    setIsEditModalOpen(true);
+  };
   const closeEditModal = () => {
     setIsEditModalOpen(false);
   };
 
   const toggleEditDeleteDropdown = (postId) => {
-    setSelectedPostIndex((prevId) =>
-        prevId === postId ? null : postId
-    );
-};
+    setSelectedPostIndex((prevId) => (prevId === postId ? null : postId));
+  };
   const toggleFilterDropdown = () => {
     setIsFilterDropdownOpen(!isFilterDropdownOpen);
   };
-
-
 
   const handleCategoryChange = (e, categoryId) => {
     const { checked } = e.target;
@@ -114,23 +110,28 @@ const openEditModal = (postId) => {
   const currentPosts = filteredPosts.slice(startIndex, endIndex);
   const postId = filteredPosts[selectedPostIndex]?.id;
 
-  const handleDelete = async (id) => {
-    // Mostrar alerta de confirmación
-    const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este post?");
-  
-    if (confirmDelete) {
-      try {        
-        await ApiBackend.deletePost(id);
-  
-        setPosts((prevPosts) =>
-        prevPosts.filter((post) => post.id !== id)
-        );
-  
-        console.log(`Post con ID ${id} eliminado con éxito`);
-      } catch (error) {
-        console.error(`Error al eliminar el post con ID ${id}:`, error);
-      }
+  const handleDeleteConfirm = async (postId) => {
+    setConfirm(null); // Fecha o componente de confirmação
+    try {
+      const token = localStorage.getItem("token");
+      await ApiBackend.deletePost(postId, token); // Chama o método deletePost
+
+      // Remove o post excluído do estado
+      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+
+      console.log(`Post con ID ${postId} eliminado con éxito`);
+    } catch (error) {
+      console.error(`Error al eliminar el post con ID ${postId}:`, error);
     }
+  };
+
+  const handleDeleteConfirmation = (postId) => {
+    setConfirm(true);
+    setSelectedPostId(postId);
+  };
+
+  const handleDeleteCancel = () => {
+    setConfirm(null);
   };
 
   return (
@@ -235,7 +236,7 @@ const openEditModal = (postId) => {
               </div>
             </div>
             <div className="overflow-y-auto">
-            <table className="w-full md:w-[97%] mx-auto text-sm text-left text-gray-500 p-6 m-6">
+              <table className="w-full md:w-[97%] mx-auto text-sm text-left text-gray-500 p-6 m-6">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                   <tr>
                     <th scope="col" className="px-4 py-3">
@@ -281,7 +282,7 @@ const openEditModal = (postId) => {
                         <td className="px-4 py-3">
                           {post.image && (
                             <img
-                              src={"http://localhost:8000/images/" +post.image}
+                              src={"http://localhost:8000/images/" + post.image}
                               alt={post.title}
                               className="w-24 h-24"
                             />
@@ -315,13 +316,24 @@ const openEditModal = (postId) => {
                                 >
                                   Edit
                                 </button>
-                                <a
+                                <button
                                   href="#"
                                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                                  onClick={() => handleDelete(post.id)}
+                                  onClick={() =>
+                                    handleDeleteConfirmation(post.id)
+                                  } // Adiciona esta linha
                                 >
                                   Delete
-                                </a>
+                                </button>
+                                {confirm && (
+                                  <AreYouSure
+                                    message="¿Estás seguro de que quieres eliminar este post?"
+                                    onConfirm={() =>
+                                      handleDeleteConfirm(selectedPostId)
+                                    }
+                                    onCancel={handleDeleteCancel}
+                                  />
+                                )}
                               </div>
                             </div>
                           </div>
@@ -401,7 +413,7 @@ const openEditModal = (postId) => {
                     </li>
                   )
                 )}
-             <li>
+                <li>
                   <a
                     href="#"
                     className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
@@ -426,7 +438,11 @@ const openEditModal = (postId) => {
             </nav>
           </div>
         </div>
-        <ModalCrudEdit isOpen={isEditModalOpen} onClose={closeEditModal} selectedPostIndex={selectedPostId}  />
+        <ModalCrudEdit
+          isOpen={isEditModalOpen}
+          onClose={closeEditModal}
+          selectedPostIndex={selectedPostId}
+        />
       </section>
     </div>
   );
