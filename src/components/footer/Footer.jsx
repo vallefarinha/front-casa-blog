@@ -5,9 +5,20 @@ import { IoLocationOutline } from "react-icons/io5";
 import { LuPhone } from "react-icons/lu";
 import { HiOutlineMail } from "react-icons/hi";
 import LogoNav from "../../assets/images/casaacogidaT.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation  } from "react-router-dom";
 
 const Footer = () => {
+  const location = useLocation();
+
+  const handleGestionClick = () => {
+    const isLoggedIn = !!localStorage.getItem('token');
+    if (isLoggedIn) {
+      window.location.href = "/admin";
+    } else {
+      window.location.href = "/login";
+    }
+  };
+
   return (
     <div className="bg-white w-full h-auto mx-auto p-4 font-poppins flex flex-col md:flex-row shadow-xl border-t-2 border-gray-200 mt-10">
       <div className="flex-wrap md:flex md:flex-nowrap max-w-screen-xl mx-auto md:justify-between">
@@ -50,9 +61,9 @@ const Footer = () => {
             <li className="hover:text-tertiaryColor">
               <Link to="/blog">Noticias</Link>
             </li>
-            <li className="hover:text-tertiaryColor">
-              <Link to="/login">Gestión</Link>
-            </li>
+             <li className="hover:text-tertiaryColor">
+            <a href="#" onClick={handleGestionClick}>Gestión</a>
+          </li>
           </ul>
         </div>
         <div className="flex-col w-full -mt-6 py-2 px-5 md:items-end md:max-w-fit sm:mt-0">

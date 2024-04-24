@@ -7,6 +7,7 @@ import { IoDocumentText } from "react-icons/io5";
 import TableAdmin from "../components/tables/TableAdmin";
 import TableComment from "../components/tables/TableComment"; 
 import { useNavigate } from "react-router-dom"; 
+import ApiBackend from '../services/ApiBackend.jsx';
 
 
 function Admin() {
@@ -18,14 +19,22 @@ function Admin() {
     setSelectedItem(item);
   };
 
-  const handleLogout = () => {
-    setShowLogoutMessage(true);
-    setTimeout(() => {
-      setShowLogoutMessage(false);
-      navigate("/"); 
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        setShowLogoutMessage(true);
+        await ApiBackend.logout(token); 
+        localStorage.removeItem('token'); 
+        setTimeout(() => {
+          setShowLogoutMessage(false);
+          navigate('/');
         }, 3000);
+      }
+    } catch (error) {
+      console.error('Erro durante o logout:', error);
+    }
   };
-
   return (
     <>
       <div className="flex">
